@@ -17,23 +17,25 @@
 import os
 
 import webapp2
-from google.appengine.ext.webapp import template
 import logging
+# project-specific files
+import common_functions
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
       path = self.request.path
       templateDir = 'templates'
       try:
-        templatePath = os.path.join( os.path.dirname( __file__ ), templateDir + path)
-        responseStr = template.render(templatePath, {})
-        self.response.write(responseStr)
+        templatePath = templateDir + '/' + path
+        self.response.write(
+            common_functions.load_template(self, file=templatePath)
+            )
       except:
-        self.response.write('Hello World!')
         path = "index.html"
-        templatePath = os.path.join( os.path.dirname( __file__ ), templateDir + '/' + path)
-        responseStr = template.render(templatePath, {})
-        self.response.write(responseStr)
+        templatePath = templateDir + '/' + path
+        self.response.write(
+            common_functions.load_template(self, file=templatePath)
+            )
 
 app = webapp2.WSGIApplication([
     ('/.*', MainHandler),
