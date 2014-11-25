@@ -14,12 +14,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import os
+
 import webapp2
+from google.appengine.ext.webapp import template
+import logging
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+      path = self.request.path
+      templateDir = 'templates'
+      try:
+        templatePath = os.path.join( os.path.dirname( __file__ ), templateDir + path)
+        responseStr = template.render(templatePath, {})
+        self.response.write(responseStr)
+      except:
+        self.response.write('Hello World!')
+        path = "index.html"
+        templatePath = os.path.join( os.path.dirname( __file__ ), templateDir + '/' + path)
+        responseStr = template.render(templatePath, {})
+        self.response.write(responseStr)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/.*', MainHandler),
 ], debug=True)
+
+
+# Notes:
+# Notes for imports:
+# logging: logging.info()
