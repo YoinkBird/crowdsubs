@@ -51,24 +51,24 @@ class SubtitleEditHandler(BaseHandler):
     # display | default
     # edit  | action=edit
     # save  | action=save
-    import html_templates
+    import html_templates_subtitles
     pageContentStr = ''
     if(pageView):
       logging.info("pageView is:" + pageView)
       if(pageView == 'edit'):
         #TODO: self.showView_edit(subtitle_id)
-        pageContentStr = html_templates.get_page_template_subtitle_edit(
+        pageContentStr = html_templates_subtitles.get_page_template_subtitle_edit(
             action='edit?subtitle_id=' + subtitle_id + '&action=submit',
             displayText=subContentStr,
             )
       elif(pageView == 'create'):
         #TODO: self.showView_edit(subtitle_id)
-        pageContentStr = html_templates.get_page_template_subtitle_create(
+        pageContentStr = html_templates_subtitles.get_page_template_subtitle_create(
             title=subtitle_id,
             action='edit?subtitle_id=' + subtitle_id + '&action=edit',
             )
       else:
-        pageContentStr = html_templates.get_page_template_subtitle_display(
+        pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             pageView = pageView,
             displayText=subContentStr,
             )
