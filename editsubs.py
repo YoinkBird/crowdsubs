@@ -61,11 +61,17 @@ class SubtitleEditHandler(BaseHandler):
     elif(not subtitle_id):
       pageView = "overview"
 
-    # view | trigger
-    # ---------------
-    # display | default
-    # edit  | action=edit
-    # save  | action=save
+    pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
+
+    # display page
+    self.render_response(
+        file='edit.html',
+        values={'page_content':pageContentStr}
+        )
+
+  # <def showView>
+  # set template for each "view"
+  def showView(self, pageView, subtitle_id, subContentStr):
     import html_templates_subtitles
     pageContentStr = ''
     if(pageView):
@@ -114,11 +120,8 @@ class SubtitleEditHandler(BaseHandler):
             displayText = outString,
             )
 
-    # display page
-    self.render_response(
-        file='edit.html',
-        values={'page_content':pageContentStr}
-        )
+    return pageContentStr
+  # </def showView>
 
   def create_sub(self, sub_id, content):
     newSub = Subtitle(
