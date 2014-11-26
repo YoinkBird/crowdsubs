@@ -102,3 +102,24 @@ def get_page_template_subtitle_display(**kwargs):
 #</get_page_template_subtitle_display>
 ################################################################
 
+################################################################
+#< get_page_template_subtitle_overview>
+def get_page_template_subtitle_overview(**kwargs):
+  if(kwargs):
+    if(not 'displayText' in kwargs):
+      return
+  title = kwargs['title']
+
+  displayText = ''
+  if('displayText' in kwargs):
+    displayText = kwargs['displayText']
+
+  template = """\
+  <h1>%s</h1>
+  """
+  template = template % title.title()
+  template += generateContainerDiv(divContent = displayText)
+  return template
+#</get_page_template_subtitle_overview>
+################################################################
+

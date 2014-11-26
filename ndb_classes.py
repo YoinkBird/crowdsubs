@@ -21,6 +21,10 @@ class Subtitle(ndb.Model):
     return cls.get_by_id(sub_id)
 
   @classmethod
+  def get_all(cls):
+    return cls.query()
+
+  @classmethod
   def delete(cls, sub_id):
     cls.get(sub_id).key.delete()
 

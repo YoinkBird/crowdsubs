@@ -71,6 +71,27 @@ def gen_html_body_template(titleText,bodyHtml):
 
 
 ################################################################
+
+
+################################################################
+#<def gen_html_ahref>
+def gen_html_ahref(**kwargs):
+  content = ''
+  html_attrib_list = []
+  if(kwargs):
+    if('href' in kwargs):
+      html_attrib_list.append('href="%s"' % kwargs['href'])
+    if('content' in kwargs):
+      content = kwargs['content']
+
+  tagName = "a"
+  tagAttribs = tagName + " " + ' '.join(html_attrib_list)
+  html = '<%s>%s</%s>' % (tagAttribs, content, tagName)
+  return html
+#</def gen_html_ahref>
+################################################################
+
+
 #< def gen_html_tag_input>
 def gen_html_tag_input(**kwargs):
   html_attrib_list = []

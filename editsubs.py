@@ -25,38 +25,41 @@ class SubtitleEditHandler(BaseHandler):
     # </end argparsing>
 
     # retrieve subtitle entry and contents
-    subInst = Subtitle.get(subtitle_id)
     subContentStr = ''
-    ## set pageView based on state of subtitle AND 'action'
-    ##  e.g. 'display' is invalid if sub does not exist
-    ## if !subInst or action=edit -> action=edit
-    ## if  subInst  -> action=display
     pageView = "display"
-    if(subInst):
-      if(action):
-        # if subInst && edit
-        if(action == "edit"):
-          pageView = "edit"
-        if(action == "delete"):
-          pageView = "delete"
-      subContentStr = subInst.content
-    else:
-      # if !subInst , show options for creation, suggestions, search, etc
-      pageView = "create"
-      #pageView = "edit" #TODO: temporary just to establish logic
-      if(action):
-        # if !subInst && edit
-        if(action == "edit"):
-          pageView = "edit"
+    if(subtitle_id):
+      #subInst = Subtitle.get(subtitle_id)
+      subInst = self.retrieve_sub(subtitle_id)
+      ## set pageView based on state of subtitle AND 'action'
+      ##  e.g. 'display' is invalid if sub does not exist
+      ## if !subInst or action=edit -> action=edit
+      ## if  subInst  -> action=display
+      if(subInst):
+        if(action):
+          # if subInst && edit
+          if(action == "edit"):
+            pageView = "edit"
+          if(action == "delete"):
+            pageView = "delete"
+        subContentStr = subInst.content
+      else:
+        # if !subInst , show options for creation, suggestions, search, etc
+        pageView = "create"
+        if(action):
+          # if !subInst && edit
+          if(action == "edit"):
+            pageView = "edit"
 
-    if(action):
-      # if XsubInst && submit
-      if(action == 'submit'):
-        if(subtitle_id and subtitle_content):
-          # HACK! but it unifies "post" and "get"
-          # TODO: do this correctly somehow.
-          subInst = self.create_sub(subtitle_id, subtitle_content).get()
-          self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
+      if(action):
+        # if XsubInst && submit
+        if(action == 'submit'):
+          if(subtitle_id and subtitle_content):
+            # HACK! but it unifies "post" and "get"
+            # TODO: do this correctly somehow.
+            subInst = self.create_sub(subtitle_id, subtitle_content).get()
+            self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
+    elif(not subtitle_id):
+      pageView = "overview"
 
     # view | trigger
     # ---------------
@@ -87,15 +90,29 @@ class SubtitleEditHandler(BaseHandler):
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_delete(
             title=subtitle_id,
             )
-      else:
+      elif(pageView == "display"):
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
             deleteUrl = requestUrl + '&action=delete',
             displayText=subContentStr,
             )
-    #else:
-      #TODO: self.showView_display(subtitle_id)
+      else: # (pageView == 'overview'):
+        outString = "Name | Content<br/>\n"
+        allModels = Subtitle.get_all().fetch()
+        import html_templates
+
+        for model in allModels:
+          subtitle_id = str(model.key.string_id())
+          relUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
+          aHrefUrl1 =  html_templates.gen_html_ahref(href = relUrl, content = subtitle_id)
+          aHrefUrl2 = html_templates.gen_html_ahref(href = relUrl, content = model.content)
+          outString += aHrefUrl1 + " | " + aHrefUrl2 + "<br/>\n"
+
+        pageContentStr = html_templates_subtitles.get_page_template_subtitle_overview(
+            title       ="Overview of Subtitles",
+            displayText = outString,
+            )
 
     # display page
     self.render_response(
