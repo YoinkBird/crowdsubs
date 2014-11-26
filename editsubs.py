@@ -12,11 +12,10 @@ class SubtitleEditHandler(BaseHandler):
   def get(self):
     # TODO: add option parsing to BaseHandler
     # assume subtitle_id is required to get to this page
-    subtitle_id = self.request.get('subtitle_id')
-    subtitle_content = self.request.get('subtitle_content')
-    action = self.request.get('action')
-    # maybe put this somewhere else
-    subtitle_content = self.request.get('subtitle_content')
+    paramDict = self.parse_options(paramList = ['subtitle_id','subtitle_content','action'])
+    subtitle_id = paramDict['subtitle_id']
+    subtitle_content = paramDict['subtitle_content']
+    action = paramDict['action']
 
     # </end argparsing>
 
