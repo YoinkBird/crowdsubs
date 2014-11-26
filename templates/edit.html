@@ -1,6 +1,10 @@
 {% extends "templates/_base.html" %}
 {% block bodycontent %}
  <h1>Editing Subtitle</h1>
+
+ {% autoescape false %}
+ {{page_content}}
+ {% endautoescape %}
  <p>
  </p>
 {% endblock %}
