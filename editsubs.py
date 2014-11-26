@@ -37,6 +37,8 @@ class SubtitleEditHandler(BaseHandler):
         # if subInst && edit
         if(action == "edit"):
           pageView = "edit"
+        if(action == "delete"):
+          pageView = "delete"
       subContentStr = subInst.content
     else:
       # if !subInst , show options for creation, suggestions, search, etc
@@ -80,10 +82,16 @@ class SubtitleEditHandler(BaseHandler):
             title=subtitle_id,
             action = requestUrl + '&action=edit',
             )
+      elif(pageView == "delete"):
+        Subtitle.delete(subtitle_id)
+        pageContentStr = html_templates_subtitles.get_page_template_subtitle_delete(
+            title=subtitle_id,
+            )
       else:
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
-            action = requestUrl + '&action=edit',
+            editUrl   = requestUrl + '&action=edit',
+            deleteUrl = requestUrl + '&action=delete',
             displayText=subContentStr,
             )
     #else:

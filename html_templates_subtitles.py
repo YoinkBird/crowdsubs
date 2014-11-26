@@ -23,6 +23,26 @@ def get_page_template_subtitle_create(**kwargs):
 ################################################################
 
 ################################################################
+#< get_page_template_subtitle_delete>
+def get_page_template_subtitle_delete(**kwargs):
+  if(kwargs):
+    if(not 'title' in kwargs):
+      return
+  title = kwargs['title']
+
+  template = """\
+  <h1>%s Not Found</h1>
+  """
+  template = template % title.title()
+
+  displayText = '<p>The page for <strong>%s</strong> has been deleted.</p>' % title
+  template += generateContainerDiv(divContent = displayText)
+  return template
+#</get_page_template_subtitle_delete>
+################################################################
+
+
+################################################################
 #< get_page_template_subtitle_edit>
 def get_page_template_subtitle_edit(**kwargs):
   if(kwargs):
@@ -62,8 +82,9 @@ def get_page_template_subtitle_display(**kwargs):
   if(kwargs):
     if(not 'displayText' in kwargs):
       return
-  title = kwargs['title']
-  action = kwargs['action']
+  title     = kwargs['title']
+  editUrl   = kwargs['editUrl']
+  deleteUrl = kwargs['deleteUrl']
 
   displayText = ''
   if('displayText' in kwargs):
@@ -73,7 +94,9 @@ def get_page_template_subtitle_display(**kwargs):
   <h1>%s</h1>
   """
   template = template % title.title()
-  template += '<a href="%s">Edit Page</a>' % action
+  template += '<a href="%s">Edit Page</a>' % editUrl
+  template += " | "
+  template += '<a href="%s">Delete Page</a>' % deleteUrl
   template += generateContainerDiv(divContent = displayText)
   return template
 #</get_page_template_subtitle_display>
