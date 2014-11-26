@@ -9,10 +9,12 @@ from ndb_classes import Subtitle
 class SubtitleEditHandler(BaseHandler):
   def post(self):
     subtitle_id = self.request.get('subtitle_id')
-    action = self.request.get('action')
     subtitle_content = self.request.get('subtitle_content')
-    if(subtitle_id and subtitle_content):
-      self.create_sub(subtitle_id, subtitle_content)
+    action = self.request.get('action')
+    if(action):
+      if(action == 'submit'):
+        if(subtitle_id and subtitle_content):
+          self.create_sub(subtitle_id, subtitle_content)
   def get(self):
     # TODO: add option parsing to BaseHandler
     # assume subtitle_id is required to get to this page
