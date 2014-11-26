@@ -16,6 +16,7 @@ class Subtitle(ndb.Model):
 #  id          = ndb.StringProperty(required=True)
   content     = ndb.StringProperty(required=True)
 
+  #<class methods>
   @classmethod
   def get(cls, sub_id):
     return cls.get_by_id(sub_id)
@@ -27,8 +28,16 @@ class Subtitle(ndb.Model):
   @classmethod
   def delete(cls, sub_id):
     cls.get(sub_id).key.delete()
+  #</class methods>
 
+  #<instance accessors>
+  def get_id_string(self):
+    subtitle_id = str(self.key.string_id())
+    return subtitle_id
 
+  def get_text(self):
+    return self.content
+  #</instance accessors>
 
 # </class_Subtitle>
 ###############################################################################

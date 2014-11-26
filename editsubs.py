@@ -29,7 +29,7 @@ class SubtitleEditHandler(BaseHandler):
     if(subtitle_id):
       subInst = self.retrieve_sub(subtitle_id)
       if(subInst):
-        subContentStr = subInst.content
+        subContentStr = subInst.get_text()
     pageView = self.defineView(
         subtitle_id = subtitle_id,
         action      = action,
@@ -127,10 +127,10 @@ class SubtitleEditHandler(BaseHandler):
         import html_templates
 
         for model in allModels:
-          subtitle_id = str(model.key.string_id())
+          subtitle_id = model.get_id_string()
           relUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
           aHrefUrl1 =  html_templates.gen_html_ahref(href = relUrl, content = subtitle_id)
-          aHrefUrl2 = html_templates.gen_html_ahref(href = relUrl, content = model.content)
+          aHrefUrl2 = html_templates.gen_html_ahref(href = relUrl, content = model.get_text())
           outString += aHrefUrl1 + " | " + aHrefUrl2 + "<br/>\n"
 
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_overview(
