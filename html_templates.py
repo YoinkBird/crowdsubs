@@ -48,6 +48,23 @@ def generateTableRow(list):
 #</generateTableRow>
 ################################################################
 
+################################################################
+#< generateTable>
+def generateTable(**kwargs):
+  attribs = "border=1 cellspacing=0"
+  if(kwargs):
+    if('content' in kwargs):
+      tableRows = kwargs['content']
+    if('attribs' in kwargs):
+      attribs = kwargs['attribs']
+  template = """\
+    <table %s>
+        %s
+    </table>
+      """
+  return template % (attribs, tableRows)
+#</generateTable>
+################################################################
 
 ################################################################
 #< def html_generate_body_template>

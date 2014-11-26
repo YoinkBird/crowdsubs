@@ -122,17 +122,27 @@ class SubtitleEditHandler(BaseHandler):
             displayText=subContentStr,
             )
       else: # (pageView == 'overview'):
-        outString = "Name | Content<br/>\n"
-        allModels = Subtitle.get_all().fetch()
         import html_templates
+        outString = html_templates.generateTableRow(["Name","Lines","Sample"])
 
+        allModels = Subtitle.get_all().fetch()
         for model in allModels:
           subtitle_id = model.get_id_string()
           relUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
-          aHrefUrl1 =  html_templates.gen_html_ahref(href = relUrl, content = subtitle_id)
-          aHrefUrl2 = html_templates.gen_html_ahref(href = relUrl, content = model.get_text())
-          outString += aHrefUrl1 + " | " + aHrefUrl2 + "<br/>\n"
+          summaryList = []
+          # generate table-row of links to subtitle page
+          for hrefTxt in model.get_summary():
+            summaryList.append(
+                html_templates.gen_html_ahref(href = relUrl, content = hrefTxt)
+                )
+          outString += html_templates.generateTableRow(summaryList)
 
+        # generate table
+        outString = html_templates.generateTable(
+            content = outString,
+            attribs = "border=1 cellspacing=0 cellpadding=5"
+            )
+        # generate page html
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_overview(
             title       ="Overview of Subtitles",
             displayText = outString,

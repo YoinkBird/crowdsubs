@@ -19,6 +19,8 @@ class Subtitle(ndb.Model):
   # key for subtitle content : "subtitles"
   contentJson = ndb.JsonProperty()
   content     = ndb.StringProperty(required=True)
+  # summary of subtitle
+  subSummary  = ndb.StringProperty(repeated=True)
   #</ndb fields>
 
   #<class methods>
@@ -56,6 +58,18 @@ class Subtitle(ndb.Model):
 
     jsonDict["subtitles"] = jsonList
     self.contentJson = jsonDict
+    # update summary
+    self.updateSummary(jsonList)
+
+  # TODO: update summary from json in order to be called directly
+  def updateSummary(self, jsonList):
+    numLines = len(jsonList)
+    # Name | Lines | Content
+    self.subSummary = [
+        self.get_id_string(),
+        str(numLines),
+        jsonList[ numLines/2][1],
+        ]
 
   def get_id_string(self):
     subtitle_id = str(self.key.string_id())
@@ -64,6 +78,9 @@ class Subtitle(ndb.Model):
   def get_text(self):
     contentStr = self.content
     return contentStr
+
+  def get_summary(self):
+    return self.subSummary
 
   def get_json(self):
     jsonStr = ''
