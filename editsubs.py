@@ -146,7 +146,7 @@ class SubtitleEditHandler(BaseHandler):
         id = sub_id,
         content = content,
         )
-    return newSub.put()
+    return newSub.customput()
 
   def retrieve_sub(self, sub_id):
     foundSub = Subtitle.get(sub_id)

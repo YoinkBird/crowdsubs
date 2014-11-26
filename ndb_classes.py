@@ -9,12 +9,17 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
 import webapp2
+import json
 
 ###############################################################################
 # < class_Subtitle>
 class Subtitle(ndb.Model):
-#  id          = ndb.StringProperty(required=True)
+  #<ndb fields>
+  # json structure notes:
+  # key for subtitle content : "subtitles"
+  contentJson = ndb.JsonProperty()
   content     = ndb.StringProperty(required=True)
+  #</ndb fields>
 
   #<class methods>
   @classmethod
@@ -28,17 +33,54 @@ class Subtitle(ndb.Model):
   @classmethod
   def delete(cls, sub_id):
     cls.get(sub_id).key.delete()
+
   #</class methods>
 
   #<instance accessors>
+  # can't figure out how to override 'put'
+  # this will have to be called before 'put'
+  def customput(self, **kwargs):
+    if(kwargs):
+      if('content' in kwargs):
+        self.content = kwargs['content']
+    self.updateJson()
+    return self.put()
+
+  def updateJson(self):
+    jsonDict = {}
+    jsonList = []
+    # store subtitle content line-for-line in jsonDict
+    for number, line in enumerate(self.content.splitlines()):
+      tmpList = [number, line]
+      jsonList.append(tmpList)
+
+    jsonDict["subtitles"] = jsonList
+    self.contentJson = jsonDict
+
   def get_id_string(self):
     subtitle_id = str(self.key.string_id())
     return subtitle_id
 
   def get_text(self):
-    return self.content
+    contentStr = self.content
+    return contentStr
+
+  def get_json(self):
+    jsonStr = ''
+    try:
+      jsonStr = json.dumps(self.contentJson)
+    except:
+      pass
+    return jsonStr
+
   #</instance accessors>
 
 # </class_Subtitle>
 ###############################################################################
+
+# NOTES
+#  http://blog.devzero.com/2013/01/28/how-to-override-a-class-method-in-python/
+#  @classmethod
+#  def put(cls):
+#    super(Subtitle, cls).put(cls)
 
