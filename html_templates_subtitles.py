@@ -29,7 +29,8 @@ def get_page_template_subtitle_edit(**kwargs):
     if(not 'action' in kwargs):
       return
   title = kwargs['title']
-  action=kwargs['action'],
+  pageName=kwargs['pageName']
+  action=kwargs['action']
 
   displayText = ''
   if('displayText' in kwargs):
@@ -49,7 +50,7 @@ def get_page_template_subtitle_edit(**kwargs):
     content=template,
     input_tag=gen_html_tag_input(type="submit", value="Save")
     )
-  template += '<a href="%s">Cancel</a>' % ('edit?subtitle_id=' + title)
+  template += '<a href="%s">Cancel</a>' % (pageName + '?subtitle_id=' + title)
   return template
 #</get_page_template_subtitle_edit>
 ################################################################

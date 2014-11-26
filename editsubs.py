@@ -7,6 +7,11 @@ from basehandler import BaseHandler
 from ndb_classes import Subtitle
 
 class SubtitleEditHandler(BaseHandler):
+  # https://webapp-improved.appspot.com/guide/handlers.html?highlight=override#overriding-init
+  def __init__(self, request, response):
+    # Set self.request, self.response and self.app.
+    self.initialize(request, response)
+    self.pageRelUrl = 'subs'
   def post(self):
     self.get()
   def get(self):
@@ -49,7 +54,7 @@ class SubtitleEditHandler(BaseHandler):
           # HACK! but it unifies "post" and "get"
           # TODO: do this correctly somehow.
           subInst = self.create_sub(subtitle_id, subtitle_content).get()
-          self.redirect('/edit?subtitle_id=' + subtitle_id)
+          self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
 
     # view | trigger
     # ---------------
@@ -60,23 +65,25 @@ class SubtitleEditHandler(BaseHandler):
     pageContentStr = ''
     if(pageView):
       logging.info("pageView is:" + pageView)
+      requestUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
       if(pageView == 'edit'):
         #TODO: self.showView_edit(subtitle_id)
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_edit(
             title=subtitle_id,
-            action='edit?subtitle_id=' + subtitle_id + '&action=submit',
+            pageName = self.pageRelUrl,
+            action   = requestUrl + '&action=submit',
             displayText=subContentStr,
             )
       elif(pageView == 'create'):
         #TODO: self.showView_edit(subtitle_id)
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_create(
             title=subtitle_id,
-            action='edit?subtitle_id=' + subtitle_id + '&action=edit',
+            action = requestUrl + '&action=edit',
             )
       else:
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
-            action='edit?subtitle_id=' + subtitle_id + '&action=edit',
+            action = requestUrl + '&action=edit',
             displayText=subContentStr,
             )
     #else:
