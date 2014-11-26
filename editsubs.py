@@ -58,6 +58,7 @@ class SubtitleEditHandler(BaseHandler):
       if(pageView == 'edit'):
         #TODO: self.showView_edit(subtitle_id)
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_edit(
+            title=subtitle_id,
             action='edit?subtitle_id=' + subtitle_id + '&action=submit',
             displayText=subContentStr,
             )
@@ -69,7 +70,8 @@ class SubtitleEditHandler(BaseHandler):
             )
       else:
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
-            pageView = pageView,
+            title=subtitle_id,
+            action='edit?subtitle_id=' + subtitle_id + '&action=edit',
             displayText=subContentStr,
             )
     #else:

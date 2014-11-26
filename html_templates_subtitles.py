@@ -10,9 +10,14 @@ def get_page_template_subtitle_create(**kwargs):
   title = kwargs['title']
   action = kwargs['action']
 
+  template = """\
+  <h1>%s Not Found</h1>
+  """
+  template = template % title.title()
+
   displayText = '<p>The page for <strong>%s</strong> does not exist</p>' % title
   displayText += '<a href="%s">Create Page</a>' % action
-  template = generateContainerDiv(divContent = displayText)
+  template += generateContainerDiv(divContent = displayText)
   return template
 #</get_page_template_subtitle_create>
 ################################################################
@@ -23,24 +28,28 @@ def get_page_template_subtitle_edit(**kwargs):
   if(kwargs):
     if(not 'action' in kwargs):
       return
+  title = kwargs['title']
+  action=kwargs['action'],
 
   displayText = ''
   if('displayText' in kwargs):
     displayText = kwargs['displayText']
 
   template = """\
+  <h1>Editing %s</h1>
   <div>
     <textarea name="subtitle_content" rows="40" cols="60">%s</textarea><br/>
   </div> 
   """
-  template = template % displayText
+  template = template % (title.title(), displayText)
   template = gen_html_form(
-    action=kwargs['action'],
+    action=action,
     method="post",
     #enctype="multipart/form-data",
     content=template,
     input_tag=gen_html_tag_input(type="submit", value="Save")
     )
+  template += '<a href="%s">Cancel</a>' % ('edit?subtitle_id=' + title)
   return template
 #</get_page_template_subtitle_edit>
 ################################################################
@@ -51,19 +60,20 @@ def get_page_template_subtitle_edit(**kwargs):
 def get_page_template_subtitle_display(**kwargs):
   if(kwargs):
     if(not 'displayText' in kwargs):
-      import logging
-      logging.info("get_page_template_subtitle_display: displayText is not in kwargs")
       return
+  title = kwargs['title']
+  action = kwargs['action']
 
   displayText = ''
   if('displayText' in kwargs):
     displayText = kwargs['displayText']
-  import logging
-  logging.info("get_page_template_subtitle_display: displayText is:" + displayText)
 
-  template = generateContainerDiv(divContent = displayText)
-  import logging
-  logging.info("get_page_template_subtitle_display: template is:" + template)
+  template = """\
+  <h1>%s</h1>
+  """
+  template = template % title.title()
+  template += '<a href="%s">Edit Page</a>' % action
+  template += generateContainerDiv(divContent = displayText)
   return template
 #</get_page_template_subtitle_display>
 ################################################################
