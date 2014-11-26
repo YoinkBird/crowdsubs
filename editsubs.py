@@ -26,6 +26,39 @@ class SubtitleEditHandler(BaseHandler):
 
     # retrieve subtitle entry and contents
     subContentStr = ''
+    if(subtitle_id):
+      subInst = self.retrieve_sub(subtitle_id)
+      if(subInst):
+        subContentStr = subInst.content
+    pageView = self.defineView(
+        subtitle_id = subtitle_id,
+        action      = action,
+        )
+
+    if(action):
+      # if XsubInst && submit
+      if(action == 'submit'):
+        if(subtitle_id and subtitle_content):
+          # HACK! but it unifies "post" and "get"
+          # TODO: do this correctly somehow.
+          subInst = self.create_sub(subtitle_id, subtitle_content).get()
+          self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
+    pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
+
+    # display page
+    self.render_response(
+        file='edit.html',
+        values={'page_content':pageContentStr}
+        )
+  # </def get>
+
+  # <def defineView>
+  def defineView(self, **kwargs):
+    if(kwargs):
+      if('subtitle_id' in kwargs):
+        subtitle_id = kwargs['subtitle_id']
+      if('action' in kwargs):
+        action = kwargs['action']
     pageView = "display"
     if(subtitle_id):
       #subInst = Subtitle.get(subtitle_id)
@@ -41,7 +74,6 @@ class SubtitleEditHandler(BaseHandler):
             pageView = "edit"
           if(action == "delete"):
             pageView = "delete"
-        subContentStr = subInst.content
       else:
         # if !subInst , show options for creation, suggestions, search, etc
         pageView = "create"
@@ -49,25 +81,11 @@ class SubtitleEditHandler(BaseHandler):
           # if !subInst && edit
           if(action == "edit"):
             pageView = "edit"
-
-      if(action):
-        # if XsubInst && submit
-        if(action == 'submit'):
-          if(subtitle_id and subtitle_content):
-            # HACK! but it unifies "post" and "get"
-            # TODO: do this correctly somehow.
-            subInst = self.create_sub(subtitle_id, subtitle_content).get()
-            self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
     elif(not subtitle_id):
       pageView = "overview"
+    return pageView
+  # </def defineView>
 
-    pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
-
-    # display page
-    self.render_response(
-        file='edit.html',
-        values={'page_content':pageContentStr}
-        )
 
   # <def showView>
   # set template for each "view"
