@@ -8,17 +8,12 @@ from ndb_classes import Subtitle
 
 class SubtitleEditHandler(BaseHandler):
   def post(self):
-    subtitle_id = self.request.get('subtitle_id')
-    subtitle_content = self.request.get('subtitle_content')
-    action = self.request.get('action')
-    if(action):
-      if(action == 'submit'):
-        if(subtitle_id and subtitle_content):
-          self.create_sub(subtitle_id, subtitle_content)
+    self.get()
   def get(self):
     # TODO: add option parsing to BaseHandler
     # assume subtitle_id is required to get to this page
     subtitle_id = self.request.get('subtitle_id')
+    subtitle_content = self.request.get('subtitle_content')
     action = self.request.get('action')
     # maybe put this somewhere else
     subtitle_content = self.request.get('subtitle_content')
@@ -47,6 +42,14 @@ class SubtitleEditHandler(BaseHandler):
         # if !subInst && edit
         if(action == "edit"):
           pageView = "edit"
+        if(action == 'submit'):
+          if(subtitle_id and subtitle_content):
+            # HACK! but it unifies "post" and "get"
+            # TODO: do this correctly somehow.
+            subInst = self.create_sub(subtitle_id, subtitle_content).get()
+            logging.info("subInst is updated: " + subInst.content)
+            subContentStr = subInst.content
+          pageView = "display"
 
     # view | trigger
     # ---------------
@@ -90,7 +93,7 @@ class SubtitleEditHandler(BaseHandler):
         id = sub_id,
         content = content,
         )
-    newSub.put()
+    return newSub.put()
 
   def retrieve_sub(self, sub_id):
     foundSub = Subtitle.get(sub_id)
