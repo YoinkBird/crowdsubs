@@ -11,13 +11,17 @@ import webapp2
 import logging
 # project-specific files
 from basehandler import BaseHandler
+import editsubs
 
 class MainHandler(BaseHandler):
   def get(self):
     self.render_response()
 
+# http://webapp-improved.appspot.com/guide/routing.html#lazy-handlers
 app = webapp2.WSGIApplication([
-    ('/.*', MainHandler),
+    ('/subs', editsubs.SubtitleEditHandler),
+    # default - leave at end of list as a catch-all
+    ('.*', MainHandler),
 ], debug=True)
 
 
