@@ -48,11 +48,8 @@ class SubtitleEditHandler(BaseHandler):
         if(subtitle_id and subtitle_content):
           # HACK! but it unifies "post" and "get"
           # TODO: do this correctly somehow.
-          logging.info("submitting sub")
           subInst = self.create_sub(subtitle_id, subtitle_content).get()
-          logging.info("subInst is updated: " + subInst.content)
           self.redirect('/edit?subtitle_id=' + subtitle_id)
-          subContentStr = subInst.content
 
     # view | trigger
     # ---------------
