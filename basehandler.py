@@ -13,6 +13,18 @@ import logging
 import common_functions
 
 class BaseHandler(webapp2.RequestHandler):
+    def parse_options(self,**kwargs):
+      postVarDict = {}
+      # < read in options>
+      try: # json input
+        postVarDict = json.loads(self.request.body)
+      except: # x-www-form
+        if('paramList' in kwargs):
+          for param in kwargs['paramList']:
+            postVarDict[param] = self.request.get(param)
+            #logging.info("BaseHandler::parse_options - param " + param + " - value " + postVarDict[param])
+      return postVarDict
+      #</read in options>
     # determine template based on (in order):
     # 1. passed-in filename, e.g. render_response(file='filename.html')
     # 2. current path
