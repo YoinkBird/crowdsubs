@@ -115,6 +115,21 @@ class SubtitleEditHandler(BaseHandler):
             title=subtitle_id,
             )
       elif(pageView == "display"):
+        # <debug>
+        if(1):
+          import html_templates
+          contentStrJson = self.retrieve_sub(subtitle_id).get_json()
+          import json
+          contentStrJson = json.dumps(
+              json.loads(contentStrJson),
+              sort_keys=True, indent=4)
+          contentStrJson = '<pre>' + contentStrJson + '</pre>'
+          if(contentStrJson):
+            contentStrJson = html_templates.generateContainerDiv(divContent = contentStrJson)
+            contentStrJson = "TESTING INFO - json:<br/>\n" + contentStrJson
+            contentStrJson = html_templates.generateContainerDivBlue(contentStrJson)
+            subContentStr = contentStrJson + subContentStr
+        # </debug>
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
