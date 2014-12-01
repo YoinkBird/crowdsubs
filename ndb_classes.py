@@ -78,11 +78,7 @@ class Subtitle(ndb.Model):
     jsonDict["subtitles"] = jsonList
     self.contentJson = jsonDict
     # update summary
-    #<TODO>
-    #TODO: fix this when final format is decided
-    if(0):
-      self.updateSummary(jsonList)
-    #</TODO>
+    self.updateSummary()
   
   def get_subtitle_list(self):
     subList = []
@@ -97,12 +93,13 @@ class Subtitle(ndb.Model):
     return subList
 
   # TODO: update summary from json in order to be called directly
-  def updateSummary(self, jsonList):
-    numLines = len(jsonList)
+  def updateSummary(self):
+    subtitleList = self.get_subtitle_list()
+    numLines = len(subtitleList)
     # Name | Lines | Content
-    lineDict = jsonList[ numLines/2 ]
-    lineDictKeys = lineDict.keys()
-    sampleText = lineDict[lineDictKeys[0]]
+    sampleText = subtitleList[ numLines/2 ]['rev'][0]['txt']
+    if(sampleText == ''):
+      sampleText = subtitleList[ numLines/3 ]['rev'][0]['txt']
     self.subSummary = [
         self.get_id_string(),
         str(numLines),
