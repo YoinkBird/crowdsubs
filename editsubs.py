@@ -167,10 +167,14 @@ class SubtitleEditHandler(BaseHandler):
   # </def showView>
 
   def create_sub(self, sub_id, content):
-    newSub = Subtitle(
-        id = sub_id,
-        content = content,
-        )
+    newSub = self.retrieve_sub(sub_id)
+    if(not newSub):
+      newSub = Subtitle(
+          id = sub_id,
+          content = content,
+          )
+    else:
+      newSub.content = content
     return newSub.customput()
 
   def retrieve_sub(self, sub_id):

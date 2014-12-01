@@ -16,7 +16,9 @@ import json
 class Subtitle(ndb.Model):
   #<ndb fields>
   # json structure notes:
-  # key for subtitle content : "subtitles"
+  # json format:
+  # {"subtitles": [{"line_id": "0", "rev": [{"txt": "line1", "votes": 1}]},
+  #                {"line_id": "1", "rev": [{"txt": "line2", "votes": 1}]}]}
   contentJson = ndb.JsonProperty()
   content     = ndb.StringProperty(required=True)
   # summary of subtitle
@@ -49,26 +51,62 @@ class Subtitle(ndb.Model):
     return self.put()
 
   def updateJson(self):
+    # json format:
+    # {"subtitles": [{"line_id": "0", "rev": [{"txt": "line1", "votes": 1}]},
+    #                {"line_id": "1", "rev": [{"txt": "line2", "votes": 1}]}]}
     jsonDict = {}
     jsonList = []
+    subtitleList = self.get_subtitle_list()
     # store subtitle content line-for-line in jsonDict
-    for number, line in enumerate(self.content.splitlines()):
-      tmpList = [number, line]
-      jsonList.append(tmpList)
+    inputLineList = self.content.splitlines()
+    for number, line in enumerate(inputLineList):
+      thisRevisionDict = {"txt":line,"votes":1}
+      # get current revisions
+      try:
+        tmpRevList = subtitleList[number]['rev']
+      except:
+        tmpRevList = [thisRevisionDict]
+      # check if changed
+      # simple check:
+      if(len(subtitleList) == len(inputLineList)):
+        # note: votes will be tallied when revisions are merged (to be implemented)
+        if(tmpRevList[0]['txt'] != line):
+          tmpRevList.insert(0, thisRevisionDict)
+      tmpDict = {'line_id':str(number), 'rev' : tmpRevList}
+      jsonList.append(tmpDict)
 
     jsonDict["subtitles"] = jsonList
     self.contentJson = jsonDict
     # update summary
-    self.updateSummary(jsonList)
+    #<TODO>
+    #TODO: fix this when final format is decided
+    if(0):
+      self.updateSummary(jsonList)
+    #</TODO>
+  
+  def get_subtitle_list(self):
+    subList = []
+    # first, store into dict 
+    jsonDict = self.contentJson
+    # get list
+    try:
+      if("subtitles" in jsonDict):
+        subList = jsonDict["subtitles"]
+    except:
+      pass
+    return subList
 
   # TODO: update summary from json in order to be called directly
   def updateSummary(self, jsonList):
     numLines = len(jsonList)
     # Name | Lines | Content
+    lineDict = jsonList[ numLines/2 ]
+    lineDictKeys = lineDict.keys()
+    sampleText = lineDict[lineDictKeys[0]]
     self.subSummary = [
         self.get_id_string(),
         str(numLines),
-        jsonList[ numLines/2][1],
+        sampleText,
         ]
 
   def get_id_string(self):
