@@ -74,6 +74,31 @@ def generateTable(**kwargs):
 ################################################################
 
 ################################################################
+#<generateTableFrom2dList>
+# render table to display table and revisions
+def generateTableFrom2dList(**kwargs):
+  bodyList = []
+  headerList  = []
+  if(kwargs):
+    if('headerList' in kwargs):
+      headerList = kwargs['headerList']
+    if('bodyList' in kwargs):
+      bodyList = kwargs['bodyList']
+  import html_templates
+  import html_templates_subtitles
+  tableRows = ""
+  tableRows = html_templates.generateTableRow(headerList)
+  for tmpTableRow in bodyList:
+    tableRows += html_templates.generateTableRow(tmpTableRow)
+  tableString = html_templates.generateTable(
+      content = tableRows,
+      **kwargs
+      )
+  return tableString
+#<generateTableFrom2dList>
+################################################################
+
+################################################################
 #< def html_generate_body_template>
 # TODO: kwargs, make title optional, etc
 def gen_html_body_template(titleText,bodyHtml):
