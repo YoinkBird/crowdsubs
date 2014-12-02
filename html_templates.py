@@ -7,6 +7,8 @@ import json
 def generateContainerDiv(**kwargs):
   bgcolor = ''
   divContent = ''
+  divStyle = "border-style:solid;border-width:1px;padding:0.5em 0.5em 0.5em 0.5em;"
+  html_attrib_list = []
   if(kwargs):
     if('divContent' in kwargs):
       divContent = kwargs['divContent']
@@ -15,10 +17,15 @@ def generateContainerDiv(**kwargs):
       divContent = titleP + divContent
     if('bgcolor' in kwargs):
       bgcolor = kwargs['bgcolor']
-  divStyle = "border-style:solid;border-width:1px;padding:0.5em 0.5em 0.5em 0.5em;"
+    if('css_class' in kwargs):
+      html_attrib_list.append('class="%s"' % kwargs['css_class'])
+      divStyle = ''
   if(bgcolor):
     divStyle += "background-color:%s;" % bgcolor
-  handlerContainer = '<div style="%s">%s</div>' % (divStyle, divContent )
+  if(divStyle):
+    html_attrib_list.append('style="%s"' % divStyle)
+  tagAttribs = ' '.join(html_attrib_list)
+  handlerContainer = '<div %s>%s</div>' % (tagAttribs, divContent )
   return handlerContainer
 #</def generateContainerDiv>
 ################################################################
