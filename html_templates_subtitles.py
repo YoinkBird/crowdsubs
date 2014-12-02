@@ -157,8 +157,6 @@ def get_class_dict(*args):
 
   retVal = classDict
   #if(args):
-  import logging
-  logging.info(args)
   for tagName in args:
     if(tagName in classDict):
       retVal = classDict[tagName]
