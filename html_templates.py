@@ -42,11 +42,16 @@ def generateContainerDivBlue(divContent):
 
 ################################################################
 #< generateTableRow>
-def generateTableRow(list):
+def generateTableRow(list, **kwargs):
+  cellType = 'td'
   tableRow = ''
+  if(kwargs):
+    if('cellType' in kwargs):
+      cellType = kwargs['cellType']
   for td in list:
     #tmplink = '<a href=%s>%s</a>' % (navDict[param], param)
-    tmptd   = '<td>%s</td>' % td
+    tmptd   =  '<' + cellType + '>%s' % td
+    tmptd   += '</' + cellType + '>'
     tableRow += tmptd
     #del tmplink
     del tmptd
@@ -77,17 +82,24 @@ def generateTable(**kwargs):
 #<generateTableFrom2dList>
 # render table to display table and revisions
 def generateTableFrom2dList(**kwargs):
-  bodyList = []
   headerList  = []
+  bodyList = []
   if(kwargs):
     if('headerList' in kwargs):
       headerList = kwargs['headerList']
     if('bodyList' in kwargs):
       bodyList = kwargs['bodyList']
+  # if not enough headers, add header-n
+  missingLen = len(bodyList[0]) - len(headerList)
+  if(missingLen > 0):
+    for num in range(0 , missingLen):
+      headerList.append("header" + str(num))
+
+    
   import html_templates
   import html_templates_subtitles
   tableRows = ""
-  tableRows = html_templates.generateTableRow(headerList)
+  tableRows = html_templates.generateTableRow(headerList, cellType='th')
   for tmpTableRow in bodyList:
     tableRows += html_templates.generateTableRow(tmpTableRow)
   tableString = html_templates.generateTable(
