@@ -128,7 +128,7 @@ class SubtitleEditHandler(BaseHandler):
             contentStrJson = html_templates.generateContainerDiv(divContent = contentStrJson)
             contentStrJson = "TESTING INFO - json:<br/>\n" + contentStrJson
             contentStrJson = html_templates.generateContainerDivBlue(contentStrJson)
-            subContentStr = contentStrJson + subContentStr
+            #subContentStr = contentStrJson + subContentStr
         # </debug>
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
@@ -136,6 +136,7 @@ class SubtitleEditHandler(BaseHandler):
             deleteUrl = requestUrl + '&action=delete',
             displayText=subContentStr,
             )
+        pageContentStr = pageContentStr + contentStrJson
       else: # (pageView == 'overview'):
         import html_templates
         outString = html_templates.generateTableRow(["Name","Lines","Sample"])
@@ -155,7 +156,7 @@ class SubtitleEditHandler(BaseHandler):
         # generate table
         outString = html_templates.generateTable(
             content = outString,
-            attribs = "border=1 cellspacing=0 cellpadding=5"
+            attribs = "border=1 cellspacing=0 cellpadding=5  class=\"" + html_templates_subtitles.get_class_dict('overview_subtitle_table') + "\""
             )
         # generate page html
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_overview(
