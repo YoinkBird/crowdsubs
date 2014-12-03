@@ -144,6 +144,8 @@ def gen_html_ahref(**kwargs):
       html_attrib_list.append('href="%s"' % kwargs['href'])
     if('content' in kwargs):
       content = kwargs['content']
+    if('attribs' in kwargs):
+      html_attrib_list.append(kwargs['attribs'])
 
   tagName = "a"
   tagAttribs = tagName + " " + ' '.join(html_attrib_list)
