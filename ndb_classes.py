@@ -110,7 +110,7 @@ class Subtitle(ndb.Model):
     tableRows = []
     for lineIdDict in subDataList:
       tmpTableRow = []
-      revKeys = ['time','txt','votes']
+      revKeys = ['time','txt','votes','rev_id']
       # get all revisions
       for revNum, revDict in enumerate(lineIdDict['rev']):
         tmpTableRow = [lineIdDict["line_id"]]
