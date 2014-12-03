@@ -38,6 +38,10 @@ class Subtitle(ndb.Model):
   def delete(cls, sub_id):
     cls.get(sub_id).key.delete()
 
+  @classmethod
+  def get_voting_params(cls):
+    requiredParams = ['line_id','rev_id','vote']
+    return requiredParams
   #</class methods>
 
   #<instance accessors>
@@ -122,6 +126,35 @@ class Subtitle(ndb.Model):
         tableRows.append(tmpTableRow)
     return tableRows
   #</def get_2d_list>
+
+  #<def updateVotes>
+  def updateVotes(self, **kwargs):
+    requiredParams = ['line_id','rev_id','vote']
+    if(kwargs):
+      for param in requiredParams:
+        if(param not in requiredParams):
+          return
+    else:
+      return
+    subDataList = self.get_subtitle_list()
+
+    # loop through subtitle lines, find matching line_id and rev_id
+    for lineNum, lineIdDict in enumerate(subDataList):
+      # find matching line_id
+      if(lineIdDict["line_id"] == kwargs["line_id"]):
+        # find matching rev_id
+        for revNum, revDict in enumerate(lineIdDict['rev']):
+          if(revDict["rev_id"] == kwargs["rev_id"]):
+            # json structure:
+            # curVotes = self.contentJson["subtitles"][lineNum]['rev'][revNum]["votes"]
+            if(kwargs["vote"] == "up"):
+              revDict["votes"] += 1
+            elif(kwargs["vote"] == "down"):
+              revDict["votes"] -= 1
+    # save results
+    self.put()
+    return
+  #</def updateVotes>
 
 
   # TODO: update summary from json in order to be called directly
