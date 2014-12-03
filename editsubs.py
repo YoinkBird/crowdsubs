@@ -43,6 +43,12 @@ class SubtitleEditHandler(BaseHandler):
           # TODO: do this correctly somehow.
           subInst = self.create_sub(subtitle_id, subtitle_content).get()
           self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + subtitle_id)
+      if(action == 'vote'):
+        if(subtitle_id):
+          # get required params and submit
+          voteDict = self.parse_options(paramList = Subtitle.get_voting_params())
+          subInst = self.retrieve_sub(subtitle_id)
+          subInst.updateVotes(**voteDict)
     pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
 
     # display page
@@ -70,6 +76,8 @@ class SubtitleEditHandler(BaseHandler):
       if(subInst):
         if(action):
           # if subInst && edit
+          if(action == "vote"):
+            pageView = "display"
           if(action == "edit"):
             pageView = "edit"
           if(action == "delete"):
