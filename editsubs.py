@@ -132,13 +132,9 @@ class SubtitleEditHandler(BaseHandler):
         # </debug>
         # <gen table>
         if(1):
-          import html_templates
-          tableString = html_templates.generateTableFrom2dList(
-              headerList = ["line_id","time","txt","votes"],
+          subContentStr = self.renderSubDisplayView(
               bodyList = self.retrieve_sub(subtitle_id).get_2d_list(),
-              attribs = "class=\"" + html_templates_subtitles.get_class_dict('display_subtitle_table') + "\""
               )
-          subContentStr = tableString
         # </gen table>
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
@@ -176,6 +172,26 @@ class SubtitleEditHandler(BaseHandler):
 
     return pageContentStr
   # </def showView>
+
+  # <def renderSubDisplayView>
+  def renderSubDisplayView(self, **kwargs):
+    import html_templates
+    import html_templates_subtitles
+    bodyList = []
+    if(kwargs):
+      if('bodyList' in kwargs):
+        bodyList = kwargs['bodyList']
+    # TODO: add voting buttons
+    # generate table
+    tableString = html_templates.generateTableFrom2dList(
+        headerList = ["line_id","time","txt","votes"],
+        bodyList = bodyList,
+        attribs = "class=\"" + html_templates_subtitles.get_class_dict('display_subtitle_table') + "\""
+        )
+    subContentStr = tableString
+    return tableString
+  # </def renderSubDisplayView>
+
 
   def create_sub(self, sub_id, content):
     newSub = self.retrieve_sub(sub_id)
