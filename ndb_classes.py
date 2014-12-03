@@ -92,6 +92,28 @@ class Subtitle(ndb.Model):
       pass
     return subList
 
+  #<def get_2d_list>
+  def get_2d_list(self):
+    subDataList = self.get_subtitle_list()
+
+    # loop through subtitle line entries and extract data
+    tableRows = []
+    for lineIdDict in subDataList:
+      tmpTableRow = []
+      revKeys = ['time','txt','votes']
+      # get all revisions
+      for revNum, revDict in enumerate(lineIdDict['rev']):
+        tmpTableRow = [lineIdDict["line_id"]]
+        for key in revKeys:
+          if(key in revDict):
+            tmpTableRow.append(revDict[key])
+          else:
+            tmpTableRow.append("&nbsp;")
+        tableRows.append(tmpTableRow)
+    return tableRows
+  #</def get_2d_list>
+
+
   # TODO: update summary from json in order to be called directly
   def updateSummary(self):
     subtitleList = self.get_subtitle_list()
