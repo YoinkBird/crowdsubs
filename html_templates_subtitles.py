@@ -150,6 +150,7 @@ def get_class_dict(*args):
       'edit_cancel_btn'         : button_red,
       'create_create_page_btn'  : button_blue,
       'overview_subtitle_table' : "table table-striped",
+      'display_subtitle_table'  : "table table-bordered table-condensed",
       }
 
   retVal = classDict

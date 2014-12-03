@@ -130,6 +130,16 @@ class SubtitleEditHandler(BaseHandler):
             contentStrJson = html_templates.generateContainerDivBlue(contentStrJson)
             #subContentStr = contentStrJson + subContentStr
         # </debug>
+        # <gen table>
+        if(1):
+          import html_templates
+          tableString = html_templates.generateTableFrom2dList(
+              headerList = ["line_id","time","txt","votes"],
+              bodyList = self.retrieve_sub(subtitle_id).get_2d_list(),
+              attribs = "class=\"" + html_templates_subtitles.get_class_dict('display_subtitle_table') + "\""
+              )
+          subContentStr = tableString
+        # </gen table>
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
