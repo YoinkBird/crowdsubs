@@ -65,7 +65,7 @@ class Subtitle(ndb.Model):
     inputLineList = self.content.splitlines()
     for number, line in enumerate(inputLineList):
       # default values for first entry; may be overwritten or discarded
-      thisRevisionDict = {"txt":line,"votes":1,"rev_id":"0001"}
+      thisRevisionDict = {"txt":line,"votes":1,"rev_id":"0000"}
       # get current revisions
       try:
         tmpRevList = subtitleList[number]['rev']
