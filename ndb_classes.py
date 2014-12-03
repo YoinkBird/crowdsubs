@@ -60,17 +60,27 @@ class Subtitle(ndb.Model):
     # store subtitle content line-for-line in jsonDict
     inputLineList = self.content.splitlines()
     for number, line in enumerate(inputLineList):
-      thisRevisionDict = {"txt":line,"votes":1}
+      # default values for first entry; may be overwritten or discarded
+      thisRevisionDict = {"txt":line,"votes":1,"rev_id":"0001"}
       # get current revisions
       try:
         tmpRevList = subtitleList[number]['rev']
       except:
         tmpRevList = [thisRevisionDict]
+
+      '''
+      # generate revision_id to track specific revisions, e.g. for vote-url
+      #  simple: just use the total number of revisions
+           as string as per http://stackoverflow.com/a/13919632
+      #  complex: use sha1 of line+entire text to avoid colliding sha1 if 2 lines are equal
+      #    see notes at bottom '''
+      revision_id = "%04d" % (len(tmpRevList))
       # check if changed
       # simple check:
       if(len(subtitleList) == len(inputLineList)):
         # note: votes will be tallied when revisions are merged (to be implemented)
         if(tmpRevList[0]['txt'] != line):
+          thisRevisionDict['rev_id'] = revision_id
           tmpRevList.insert(0, thisRevisionDict)
       tmpDict = {'line_id':str(number), 'rev' : tmpRevList}
       jsonList.append(tmpDict)
@@ -158,3 +168,5 @@ class Subtitle(ndb.Model):
 #  def put(cls):
 #    super(Subtitle, cls).put(cls)
 
+# sha1
+#  see http://stackoverflow.com/a/552725 and concisely http://stackoverflow.com/questions/1869885/calculating-sha1-of-a-file
