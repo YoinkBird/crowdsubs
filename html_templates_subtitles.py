@@ -151,6 +151,8 @@ def get_class_dict(*args):
       'create_create_page_btn'  : button_blue,
       'overview_subtitle_table' : "table table-striped",
       'display_subtitle_table'  : "table table-bordered table-condensed",
+      'display_vote_up_btn'     : 'btn btn-xs btn-success',
+      'display_vote_down_btn'   : 'btn btn-xs btn-danger',
       }
 
   retVal = classDict

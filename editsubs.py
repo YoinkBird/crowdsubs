@@ -133,6 +133,7 @@ class SubtitleEditHandler(BaseHandler):
         # <gen table>
         if(1):
           subContentStr = self.renderSubDisplayView(
+              subtitle_id = subtitle_id,
               bodyList = self.retrieve_sub(subtitle_id).get_2d_list(),
               )
         # </gen table>
@@ -178,13 +179,31 @@ class SubtitleEditHandler(BaseHandler):
     import html_templates
     import html_templates_subtitles
     bodyList = []
+    subtitle_id = ''
     if(kwargs):
       if('bodyList' in kwargs):
         bodyList = kwargs['bodyList']
-    # TODO: add voting buttons
+      if('subtitle_id' in kwargs):
+        subtitle_id = kwargs['subtitle_id']
+    # add voting buttons
+    for row in bodyList:
+      # modify 'rev_id' column
+      if(subtitle_id):
+        rev_id = row[4]
+        baseVoteQueryParam = 'subs?subtitle_id=%s&action=vote&line_id=%s&rev_id=%s&vote=' % (subtitle_id, row[0], row[4])
+        voteLinkTxt = ''
+        voteLinkTxt += html_templates.gen_html_ahref(
+            attribs = 'class = "' + html_templates_subtitles.get_class_dict('display_vote_up_btn') + '"',
+            href = baseVoteQueryParam + "up", content = "[+]",)
+        voteLinkTxt += ' / '
+        voteLinkTxt += html_templates.gen_html_ahref(
+            attribs = 'class = "' + html_templates_subtitles.get_class_dict('display_vote_down_btn') + '"',
+            href = baseVoteQueryParam + "down", content = "[-]",)
+        row[4] = voteLinkTxt + " " + rev_id
+    pass
     # generate table
     tableString = html_templates.generateTableFrom2dList(
-        headerList = ["line_id","time","txt","votes"],
+        headerList = ["line_id","time","txt","votes","vote on rev"],
         bodyList = bodyList,
         attribs = "class=\"" + html_templates_subtitles.get_class_dict('display_subtitle_table') + "\""
         )
