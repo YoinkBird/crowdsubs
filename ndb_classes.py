@@ -63,7 +63,14 @@ class Subtitle(ndb.Model):
     subtitleList = self.get_subtitle_list()
     # store subtitle content line-for-line in jsonDict
     inputLineList = self.content.splitlines()
-    for number, line in enumerate(inputLineList):
+    # split input into 2d list for processing
+    inputLineList = self.parse_input_text(
+        text = self.content
+        )
+    # format: lineList['line_id' , 'inputTxtLine']
+    for number, lineList in enumerate(inputLineList):
+      line    = lineList[1]
+      line_id = lineList[0]
       # default values for first entry; may be overwritten or discarded
       thisRevisionDict = {"txt":line,"votes":1,"rev_id":"0000"}
       # get current revisions
@@ -86,7 +93,8 @@ class Subtitle(ndb.Model):
         if(tmpRevList[0]['txt'] != line):
           thisRevisionDict['rev_id'] = revision_id
           tmpRevList.insert(0, thisRevisionDict)
-      tmpDict = {'line_id':str(number), 'rev' : tmpRevList}
+      # finalise
+      tmpDict = {'line_id' : line_id, 'rev' : tmpRevList}
       jsonList.append(tmpDict)
 
     jsonDict["subtitles"] = jsonList
@@ -94,6 +102,25 @@ class Subtitle(ndb.Model):
     # update summary
     self.updateSummary()
   
+  #<parse_input_text>
+  def parse_input_text(self, **kwargs):
+    text = ''
+    if(kwargs):
+      if('text' in kwargs):
+        text = kwargs['text']
+
+    # convert input to list
+    inputLineList = text.splitlines()
+    # split input into 2d list for processing
+    textList = []
+    # simple conversion to begin
+    for number, line in enumerate(inputLineList):
+      line_id = "%05d" % (number)  # formatting for appearance, should be done in front-end, not here
+      tmpList = [line_id, line]
+      textList.append(tmpList)
+    return textList
+  #</parse_input_text>
+
   def get_subtitle_list(self):
     subList = []
     # first, store into dict 
