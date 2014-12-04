@@ -90,6 +90,7 @@ def get_page_template_subtitle_display(**kwargs):
   title     = kwargs['title']
   editUrl   = kwargs['editUrl']
   deleteUrl = kwargs['deleteUrl']
+  translateUrl = kwargs['translateUrl']
 
   displayText = ''
   if('displayText' in kwargs):
@@ -105,6 +106,9 @@ def get_page_template_subtitle_display(**kwargs):
   template += " | "
   hrefAttribs = 'class="' + get_class_dict('display_delete_page_btn') + '"'
   template += '<a href="%s" %s>Delete Page</a>' % (deleteUrl, hrefAttribs)
+  template += " | "
+  hrefAttribs = 'class="' + get_class_dict('display_translate_page_btn') + '"'
+  template += '<a href="%s" %s>Translate Page</a>' % (translateUrl, hrefAttribs)
   # surround in div
   template += generateContainerDiv(
       divContent = displayText,
@@ -145,6 +149,7 @@ def get_class_dict(*args):
   classDict = {
       'display_edit_page_btn'   : button_blue,
       'display_delete_page_btn' : button_red,
+      'display_translate_page_btn' : button_green,
       'display_container_div'   : 'well',
       'edit_save_btn'           : button_green,
       'edit_cancel_btn'         : button_red,

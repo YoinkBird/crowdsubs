@@ -161,6 +161,7 @@ class SubtitleEditHandler(SubtitleApiHandler):
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
             deleteUrl = requestUrl + '&action=delete',
+            translateUrl = requestUrl + '&action=translate',
             displayText=subContentStr,
             )
         pageContentStr = pageContentStr + contentStrJson
