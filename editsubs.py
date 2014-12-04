@@ -49,6 +49,18 @@ class SubtitleEditHandler(SubtitleApiHandler):
           voteDict = self.parse_options(paramList = Subtitle.get_voting_params())
           subInst = self.retrieve_sub(subtitle_id)
           subInst.updateVotes(**voteDict)
+      # if XsubInst && translate
+      if(action == 'translate'):
+        if(subtitle_id and subContentStr):
+          # http://crowdsubs.appspot.com/api?subtitle_id=test_deployment&action=translate
+          respJson = self.process_json(
+              subtitle_id = subtitle_id,
+              subtitle_content = subContentStr,
+              action = 'translate',
+              )
+          if(respJson):
+            logging.info(respJson['subtitle_id'])
+            self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + respJson['subtitle_id'])
     pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
 
     # display page
