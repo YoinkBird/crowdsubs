@@ -3,10 +3,10 @@
 import webapp2
 import logging
 # project-specific files
-from basehandler import BaseHandler
+from subtitle_api import SubtitleApiHandler
 from ndb_classes import Subtitle
 
-class SubtitleEditHandler(BaseHandler):
+class SubtitleEditHandler(SubtitleApiHandler):
   # https://webapp-improved.appspot.com/guide/handlers.html?highlight=override#overriding-init
   def __init__(self, request, response):
     # Set self.request, self.response and self.app.
