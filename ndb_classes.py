@@ -90,12 +90,19 @@ class Subtitle(ndb.Model):
       # simple check:
       if(len(subtitleList) == len(inputLineList)):
         # note: votes will be tallied when revisions are merged (to be implemented)
-        if(tmpRevList[0]['txt'] != line):
+        # verify that change is not already present
+        #   impl: set flag 'rev_id_found' if line-version already present
+        rev_id_found = 0
+        for revDict in tmpRevList:
+          if(revDict['txt'] == line):
+            rev_id_found = 1
+        # if line-version not already present, create new rev_id 
+        if(rev_id_found == 0):
           thisRevisionDict['rev_id'] = revision_id
           tmpRevList.insert(0, thisRevisionDict)
       # finalise
-      tmpDict = {'line_id' : line_id, 'rev' : tmpRevList}
-      jsonList.append(tmpDict)
+      tmpLineDict = {'line_id' : line_id, 'rev' : tmpRevList}
+      jsonList.append(tmpLineDict)
 
     jsonDict["subtitles"] = jsonList
     self.contentJson = jsonDict
