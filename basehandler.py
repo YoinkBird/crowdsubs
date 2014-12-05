@@ -9,6 +9,7 @@
 
 import webapp2
 import logging
+import json
 # project-specific files
 import common_functions
 
@@ -18,6 +19,7 @@ class BaseHandler(webapp2.RequestHandler):
       # < read in options>
       try: # json input
         postVarDict = json.loads(self.request.body)
+      # TODO: catch ValueError: No JSON object could be decoded
       except: # x-www-form
         if('paramList' in kwargs):
           for param in kwargs['paramList']:
