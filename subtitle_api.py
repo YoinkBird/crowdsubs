@@ -16,11 +16,13 @@ class SubtitleApiHandler(BaseHandler):
   def post(self):
     self.get()
   def get(self):
-    self.process_json()
-  def process_json(self):
-    # TODO: add option parsing to BaseHandler
     # assume subtitle_id is required to get to this page
     paramDict = self.parse_options(paramList = ['subtitle_id','subtitle_content','action'])
+    self.process_json(**paramDict)
+  def process_json(self, **kwargs):
+    # TODO: add option parsing to BaseHandler
+    if(kwargs):
+      paramDict = kwargs
     subtitle_id = paramDict['subtitle_id']
     subtitle_content = paramDict['subtitle_content']
     action = paramDict['action']
