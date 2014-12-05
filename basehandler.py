@@ -27,11 +27,13 @@ class BaseHandler(webapp2.RequestHandler):
             #logging.info("BaseHandler::parse_options - param " + param + " - value " + postVarDict[param])
       return postVarDict
       #</read in options>
+
+    #<def render_template>
     # determine template based on (in order):
-    # 1. passed-in filename, e.g. render_response(file='filename.html')
+    # 1. passed-in filename, e.g. render_template(file='filename.html')
     # 2. current path
     # 3. index.html
-    def render_response(self, **kwargs):
+    def render_template(self, **kwargs):
       paramDict = kwargs
       templateStr = ''
       path = self.request.path
@@ -51,8 +53,16 @@ class BaseHandler(webapp2.RequestHandler):
           path = "index.html"
           templatePath = templateDir + '/' + path
           templateStr = common_functions.load_template(self, file=templatePath)
+      return templateStr
+    #</def render_template>
+
+    #<def render_response>
+    # render_template and write out
+    def render_response(self, **kwargs):
+      templateStr = self.render_template(**kwargs)
       # print template
       self.response.write(templateStr)
+    #</def render_response>
 
     ################################################################
     # < def_sendJson>
