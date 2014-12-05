@@ -109,6 +109,30 @@ def get_test_dict_pattern(**kwargs):
 ######################################################
   
 # many more functions like the above
+################################################################ 
+# TODO: should just translate normal subtitles...
+def get_translation_tests():
+  txlateTestList = []
+  serviceName = 'api_translate_simple'
+  testConfigDict[serviceName] = get_test_dict_pattern(
+    serviceName = serviceName,
+    request = {"subtitle_id":"test_translate_simple", "action":"translate", "subtitle_content":"should_not_be_here"},
+    #repeat  = 15,
+    )
+  txlateTestList.append(testConfigDict[serviceName])
+  import copy
+  # default subtitle
+  txlateDefault = copy.deepcopy(testConfigDict[serviceName])
+  txlateDefault['serviceName'] = 'api_translate'
+  txlateDefault['request']['subtitle_id'] = 'test_translate'
+  txlateTestList.append(txlateDefault)
+  # "demo" subtitle
+  txlateDefault = copy.deepcopy(testConfigDict[serviceName])
+  txlateDefault['serviceName'] = 'test_demo'
+  txlateDefault['request']['subtitle_id'] = 'test_translate'
+  txlateTestList.append(txlateDefault)
+
+  return txlateTestList
 
 if __name__ == '__main__':
   # < read args>
@@ -141,6 +165,8 @@ if __name__ == '__main__':
   # TODO: make that a list of dicts
   testConfigDict =  {
       'api_display' : {"subtitle_id" : "test1", "action" : "display", "subtitle_content" : "line1"},
+      # http://localhost:8080/api?subtitle_id=test_translate_simple&action=translate
+      #NO_WORK: 'api_translate_simple' : {"serviceName":"api_translate_simple", "service" : "api", "subtitle_id" : "test_translate_simple", "action" : "translate", "subtitle_content" : "should_not_be_here"},
       } 
   # easier
   serviceList = testConfigDict.keys()
@@ -209,6 +235,9 @@ if __name__ == '__main__':
         )
       serviceList.append(testConfigDict[serviceName])
 
+    if(1):
+      serviceList.extend( get_translation_tests() )
+
   # RUN tests
   serviceRunList = testConfigDict.keys()
   serviceRunList = ['genericquery']
@@ -254,3 +283,4 @@ if __name__ == '__main__':
   print('#' * 64)
   print("vvvvv failed vvvvv")
   print(failedList)
+
