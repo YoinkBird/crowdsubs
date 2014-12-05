@@ -75,8 +75,21 @@ class SubtitleApiHandler(BaseHandler):
       #TODO: finalise this
       elif(action == "overview"):
         jsonDict = {'overview' : 'TODO'}
+      elif(action == "translate"):
+        # Doc: http://mymemory.translated.net/doc/spec.php
+        # URL: http://api.mymemory.translated.net/get?q=Hello%20World!&langpair=en|it
+        ##########
+        translateUrl = 'http://api.mymemory.translated.net'
+        jsonSendDict = {'q':subContentStr, 'langpair':'en|it'} # TODO: user-select language
+        translateJson = json.loads(self.sendUrlGet(jsondata = jsonSendDict, service_name = 'get', url = translateUrl))
+        if(0): #debug
+          jsonDict['translate_repsonse'] = translateJson
+        jsonDict['translated_text'] = translateJson['responseData']['translatedText']
 
     self.response.write(json.dumps(jsonDict))
+    debug = 0
+    if(debug):
+      self.response.write('<pre>' + json.dumps(jsonDict, indent=4) + '</pre>')
   # </def get>
 
 
