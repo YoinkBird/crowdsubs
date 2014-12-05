@@ -85,6 +85,7 @@ class SubtitleApiHandler(BaseHandler):
         if(0): #debug
           jsonDict['translate_repsonse'] = translateJson
         jsonDict['translated_text'] = translateJson['responseData']['translatedText']
+        self.create_or_update_sub(subtitle_id + '_lang_it', jsonDict['translated_text'])
 
     self.response.write(json.dumps(jsonDict))
     debug = 0
@@ -94,6 +95,19 @@ class SubtitleApiHandler(BaseHandler):
 
 
 
+  # <def create_or_update_sub>
+  def create_or_update_sub(self, subtitle_id, subtitle_content):
+    jsonDict = {}
+    jsonDict['status'] = {'code':10, 'msg': "no content provided"}
+    if(subtitle_id and subtitle_content):
+      subInst = self.create_sub(subtitle_id, subtitle_content).get()
+      # return success/fail
+      # TODO: un-hardcode the value, use the return of self.create_sub
+      jsonDict['status'] = {'code':15, 'msg': "unable to store OR retrieve"}
+      if(subInst is not None):
+        jsonDict['status'] = {'code':0, 'msg': "successful store AND retrieve"}
+    return jsonDict
+  # </def create_or_update_sub>
 
 
   def create_sub(self, sub_id, content):
