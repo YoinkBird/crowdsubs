@@ -93,6 +93,7 @@ class SubtitleApiHandler(BaseHandler):
     debug = 0
     if(debug):
       self.response.write('<pre>' + json.dumps(jsonDict, indent=4) + '</pre>')
+    return jsonDict
   # </def get>
 
 
