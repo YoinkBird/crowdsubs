@@ -82,12 +82,16 @@ class SubtitleApiHandler(BaseHandler):
         # URL: http://api.mymemory.translated.net/get?q=Hello%20World!&langpair=en|it
         ##########
         translateUrl = 'http://api.mymemory.translated.net'
-        jsonSendDict = {'q':subContentStr, 'langpair':'en|it'} # TODO: user-select language
+        # TODO: user-select language
+        targetLang = 'it'
+        subtitle_id_lang = subtitle_id + '_lang_' + targetLang
+        jsonSendDict = {'q':subContentStr, 'langpair':'en|' + targetLang}
         translateJson = json.loads(self.sendUrlGet(jsondata = jsonSendDict, service_name = 'get', url = translateUrl))
         if(0): #debug
           jsonDict['translate_repsonse'] = translateJson
         jsonDict['translated_text'] = translateJson['responseData']['translatedText']
-        self.create_or_update_sub(subtitle_id + '_lang_it', jsonDict['translated_text'])
+        jsonDict['subtitle_id'] = subtitle_id_lang
+        self.create_or_update_sub(subtitle_id_lang, jsonDict['translated_text'])
 
     self.response.write(json.dumps(jsonDict))
     debug = 0
