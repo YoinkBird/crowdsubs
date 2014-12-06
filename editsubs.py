@@ -19,6 +19,7 @@ class SubtitleEditHandler(SubtitleApiHandler):
     # assume subtitle_id is required to get to this page
     paramDict = self.parse_options(paramList = ['subtitle_id','subtitle_content','action'])
     subtitle_id = paramDict['subtitle_id']
+    subtitle_id = subtitle_id.lower()
     subtitle_content = paramDict['subtitle_content']
     action = paramDict['action']
 
@@ -122,6 +123,7 @@ class SubtitleEditHandler(SubtitleApiHandler):
       requestUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
       if(pageView == 'edit'):
         #TODO: self.showView_edit(subtitle_id)
+        requestUrl = self.pageRelUrl + '?' # + 'subtitle_id=' + subtitle_id
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_edit(
             title=subtitle_id,
             pageName = self.pageRelUrl,
@@ -303,6 +305,7 @@ class SubtitleEditHandler(SubtitleApiHandler):
   # </def modifySubtitleTable>
 
   def create_sub(self, sub_id, content):
+    sub_id = sub_id.lower()
     newSub = self.retrieve_sub(sub_id)
     if(not newSub):
       newSub = Subtitle(

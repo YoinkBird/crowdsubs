@@ -165,6 +165,8 @@ def gen_html_tag_input(**kwargs):
       html_attrib_list.append('class="%s"' % kwargs['css_class'])
     if('value' in kwargs):
       html_attrib_list.append('value="%s"' % kwargs['value'])
+    if('attribs' in kwargs):
+      html_attrib_list.append(kwargs['attribs'])
   inputTagAttribs = ' '.join(html_attrib_list)
   html_input = '<input %s>' % (inputTagAttribs)
   return html_input

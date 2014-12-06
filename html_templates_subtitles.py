@@ -63,7 +63,17 @@ def get_page_template_subtitle_edit(**kwargs):
     <textarea name="subtitle_content" rows="10" cols="60">%s</textarea><br/>
   </div> 
   """
-  template = template % (title.title(), displayText)
+  subtitle_id_input = gen_html_tag_input(
+      type  = "text",
+      # attribs = 'size=15',
+      attribs = "name=subtitle_id",
+      name  = title,
+      value = title.title(),
+      )
+  if(1):
+    template = template % (subtitle_id_input, displayText)
+  else:
+    template = template % (title.title(), displayText)
   buttonRow = gen_html_tag_input(type="submit", value="Save",
       css_class= get_class_dict('edit_save_btn')
       )
