@@ -1,0 +1,54 @@
+{% block bodycontent %}
+
+{% raw %}
+<div id="example" class="handsontable"></div>
+ <script>
+$(document).ready(function () {
+
+
+  function getTableConfig() {
+{% endraw %}
+{% autoescape false %}
+    tableConfigHash = {{tableJson}}
+{% endautoescape %}
+{% raw %}
+    return tableConfigHash;
+  }
+    
+  var container = document.getElementById('example');
+  var hot = new Handsontable(container,
+  {
+    data: getTableConfig()['data'],
+    minSpareRows: 1,
+    contextMenu: true,
+    colHeaders: true,
+    colHeaders: getTableConfig()['colHeaders'],
+    columns: getTableConfig()['columns']
+  });
+  
+  
+  function bindDumpButton() {
+  
+      Handsontable.Dom.addEvent(document.body, 'click', function (e) {
+  
+        var element = e.target || e.srcElement;
+  
+        if (element.nodeName == "BUTTON" && element.name == 'dump') {
+          var name = element.getAttribute('data-dump');
+          var instance = element.getAttribute('data-instance');
+          var hot = window[instance];
+          console.log('data of ' + name, hot.getData());
+        }
+      });
+    }
+  bindDumpButton();
+
+});
+ </script>
+{% endraw %}
+ {% autoescape false %}
+ {{page_content}}
+ {% endautoescape %}
+ <p>
+ </p>
+{% endblock %}

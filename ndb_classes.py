@@ -195,7 +195,8 @@ class Subtitle(ndb.Model):
           },
         {
           "data" : "rev_id",
-          "readOnly" : "true"
+          "readOnly" : "true",
+          "renderer" : "html"
           }
         ]
 

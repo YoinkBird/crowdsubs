@@ -155,13 +155,26 @@ class SubtitleEditHandler(SubtitleApiHandler):
             contentStrJson = html_templates.generateContainerDivBlue(contentStrJson)
             #subContentStr = contentStrJson + subContentStr
         # </debug>
-        # <gen table>
+        # <gen html table>
         if(1):
-          subContentStr = self.renderSubDisplayView(
+          templateStrTableHtml = self.renderSubDisplayView(
               subtitle_id = subtitle_id,
               bodyList = self.retrieve_sub(subtitle_id).get_2d_list(),
               )
-        # </gen table>
+        # </gen html table>
+        #<gen code for javascript table>
+        if(1):
+          tableConfigDict = self.retrieve_sub(subtitle_id).get_table_config_dict()
+          # add up/downvote links
+          tableConfigDict = self.modifySubtitleTable(tableConfigDict = tableConfigDict)
+          #DEBUG: 'indent = 4' is for debugging generated JavaScript
+          segmentContentStr =  json.dumps(tableConfigDict, indent=4)
+          templateStrTableHandsonJS = self.render_template(
+              file   = 'handsontable.html',
+              values = {'tableJson':segmentContentStr},
+              )
+        #</gen code for javascript table>
+        subContentStr = templateStrTableHandsonJS + templateStrTableHtml
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
@@ -259,6 +272,35 @@ class SubtitleEditHandler(SubtitleApiHandler):
     #</generate html links>
     return voteLinkTxt
   # </def generateVoteLinks>
+
+  # <def modifySubtitleTable>
+  def modifySubtitleTable(self, **kwargs):
+    tableConfigDict = {} #self.retrieve_sub(subtitle_id).get_table_config_dict()
+    if(kwargs):
+      if('tableConfigDict' in kwargs):
+        tableConfigDict = kwargs['tableConfigDict']
+    #</argparse>
+    #<do stuff>
+    subtitle_id = tableConfigDict['subtitle_id']
+    for lineDict in tableConfigDict['data']:
+      #<check required vars>
+      if(lineDict):
+        for requiredParam in ('line_id', 'rev_id'):
+          if(requiredParam not in lineDict):
+            return
+      line_id     = lineDict['line_id']
+      rev_id      = lineDict['rev_id']
+      #</check required vars>
+      rev_id = lineDict['rev_id']
+      voteLinkTxt = self.generateVoteLinks(
+          subtitle_id = subtitle_id,
+          line_id     = line_id,
+          rev_id      = rev_id,
+          )
+      voteLinkTxt = voteLinkTxt + " " + rev_id
+      lineDict['rev_id'] = voteLinkTxt
+    return tableConfigDict
+  # </def modifySubtitleTable>
 
   def create_sub(self, sub_id, content):
     newSub = self.retrieve_sub(sub_id)
