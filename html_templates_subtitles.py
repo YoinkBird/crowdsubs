@@ -59,9 +59,11 @@ def get_page_template_subtitle_edit(**kwargs):
   if('displayText' in kwargs):
     displayText = kwargs['displayText']
 
-  template = """\
+  template_subtitle_id = """\
   <h1>Editing %s</h1>
-  <div>
+  """
+  template_json_table = """\
+  <div id="subtitle_id">
     %s
   </div> 
   """
@@ -74,10 +76,10 @@ def get_page_template_subtitle_edit(**kwargs):
       name  = title,
       value = title.title(),
       )
-  if(1):
-    template = template % (subtitle_id_input, displayText)
-  else:
-    template = template % (title.title(), displayText)
+  template_subtitle_id = template_subtitle_id % (subtitle_id_input)
+
+  # generate json input table
+  template_json_table = template_json_table % (displayText)
 
 
   # generate plain text area
@@ -87,7 +89,7 @@ def get_page_template_subtitle_edit(**kwargs):
     <textarea name="subtitle_content" rows="10" cols="60">%s</textarea><br/>
   </div> 
   """
-  template += textAreaTemplateStr % textareaContent
+  template = textAreaTemplateStr % textareaContent
 
   # generate buttons for form
   buttonRow = gen_html_tag_input(type="submit", value="Save",
@@ -98,13 +100,14 @@ def get_page_template_subtitle_edit(**kwargs):
   buttonRow += '<a href="%s" %s>Cancel</a>' % (pageName + '?subtitle_id=' + title, hrefAttribs)
 
   # generate form
-  template = gen_html_form(
+  form_part_subtitle_content = gen_html_form(
     action=action,
     method="post",
     #enctype="multipart/form-data",
-    content=template,
+    content= template_subtitle_id + template,
     input_tag = buttonRow,
     )
+  template = template_json_table + form_part_subtitle_content
   return template
 #</get_page_template_subtitle_edit>
 ################################################################
