@@ -103,6 +103,9 @@ class SubtitleEditHandler(SubtitleApiHandler):
             pageView = "edit"
     elif(not subtitle_id):
       pageView = "overview"
+      if(action):
+        if(action == "edit"):
+          pageView = "edit"
     return pageView
   # </def defineView>
 
@@ -209,6 +212,8 @@ class SubtitleEditHandler(SubtitleApiHandler):
         # generate page html
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_overview(
             title       ="Overview of Subtitles",
+            #editUrl     = requestUrl + '&action=edit',
+            editUrl     = self.pageRelUrl + '?action=edit',
             displayText = outString,
             )
 

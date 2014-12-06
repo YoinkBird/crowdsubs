@@ -135,6 +135,7 @@ def get_page_template_subtitle_overview(**kwargs):
     if(not 'displayText' in kwargs):
       return
   title = kwargs['title']
+  editUrl   = kwargs['editUrl']
 
   displayText = ''
   if('displayText' in kwargs):
@@ -143,6 +144,10 @@ def get_page_template_subtitle_overview(**kwargs):
   template = """\
   <h1>%s</h1>
   """
+  # render buttons
+  hrefAttribs = 'class="' + get_class_dict('display_translate_page_btn') + '"'
+  template += '<a href="%s" %s>Create Subtitle</a>' % (editUrl, hrefAttribs)
+  template += " | "
   template = template % title.title()
   template += displayText
   return template
@@ -157,6 +162,7 @@ def get_class_dict(*args):
   button_red   = 'btn btn-danger'
   button_green = 'btn btn-success'
   classDict = {
+      'create_btn'              : button_green,
       'display_edit_page_btn'   : button_blue,
       'display_delete_page_btn' : button_red,
       'display_translate_page_btn' : button_green,
