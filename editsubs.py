@@ -61,12 +61,11 @@ class SubtitleEditHandler(SubtitleApiHandler):
           if(respJson):
             logging.info(respJson['subtitle_id'])
             self.redirect("/" + self.pageRelUrl + "?subtitle_id=" + respJson['subtitle_id'])
-    pageContentStr = self.showView(pageView, subtitle_id, subContentStr)
+    pageConfigDict = self.showView(pageView, subtitle_id, subContentStr)
 
     # display page
     self.render_response(
-        file='edit.html',
-        values={'page_content':pageContentStr}
+        **pageConfigDict
         )
   # </def get>
 
@@ -109,9 +108,15 @@ class SubtitleEditHandler(SubtitleApiHandler):
 
   # <def showView>
   # set template for each "view"
+  # TODO: rename to 'def configureTemplate'
   def showView(self, pageView, subtitle_id, subContentStr):
     import html_templates_subtitles
     pageContentStr = ''
+    templateConfigDict = {
+        'file' : 'edit.html',
+        'values' : {'page_content':pageContentStr}
+        }
+    pageContentStr = templateConfigDict['values']['page_content']
     if(pageView):
       logging.info("pageView is:" + pageView)
       requestUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
@@ -192,7 +197,8 @@ class SubtitleEditHandler(SubtitleApiHandler):
             displayText = outString,
             )
 
-    return pageContentStr
+    templateConfigDict['values']['page_content'] = pageContentStr
+    return templateConfigDict
   # </def showView>
 
   # <def renderSubDisplayView>
