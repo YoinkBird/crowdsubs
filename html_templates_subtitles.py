@@ -52,7 +52,9 @@ def get_page_template_subtitle_edit(**kwargs):
   title = kwargs['title']
   pageName=kwargs['pageName']
   action=kwargs['action']
+  textareaContent  = kwargs['textareaContent']
 
+    
   displayText = ''
   if('displayText' in kwargs):
     displayText = kwargs['displayText']
@@ -60,9 +62,11 @@ def get_page_template_subtitle_edit(**kwargs):
   template = """\
   <h1>Editing %s</h1>
   <div>
-    <textarea name="subtitle_content" rows="10" cols="60">%s</textarea><br/>
+    %s
   </div> 
   """
+
+  # generate input field for subtitle name
   subtitle_id_input = gen_html_tag_input(
       type  = "text",
       # attribs = 'size=15',
@@ -74,12 +78,26 @@ def get_page_template_subtitle_edit(**kwargs):
     template = template % (subtitle_id_input, displayText)
   else:
     template = template % (title.title(), displayText)
+
+
+  # generate plain text area
+  # not sure how to make an empty table, so a textarea has to suffice for starting the subtitle
+  textAreaTemplateStr = """\
+  <div>
+    <textarea name="subtitle_content" rows="10" cols="60">%s</textarea><br/>
+  </div> 
+  """
+  template += textAreaTemplateStr % textareaContent
+
+  # generate buttons for form
   buttonRow = gen_html_tag_input(type="submit", value="Save",
       css_class= get_class_dict('edit_save_btn')
       )
   buttonRow += " | "
   hrefAttribs = 'class="' + get_class_dict('edit_cancel_btn') + '"'
   buttonRow += '<a href="%s" %s>Cancel</a>' % (pageName + '?subtitle_id=' + title, hrefAttribs)
+
+  # generate form
   template = gen_html_form(
     action=action,
     method="post",

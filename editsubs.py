@@ -125,13 +125,32 @@ class SubtitleEditHandler(SubtitleApiHandler):
       logging.info("pageView is:" + pageView)
       requestUrl = self.pageRelUrl + '?subtitle_id=' + subtitle_id
       if(pageView == 'edit'):
-        #TODO: self.showView_edit(subtitle_id)
+        # default to plain text. this works for new subtitles becuase it is null
+        generatedHtml = subContentStr
+        #<gen code for javascript table>
+        if(subtitle_id):
+          import json
+          #tableConfigDict = self.retrieve_sub(subtitle_id).get_table_config_dict()
+          # if subtitle already exists, retrieve json table
+          editSubInst = self.retrieve_sub(subtitle_id)
+          if(editSubInst):
+            tableConfigDict = editSubInst.get_table_config_dict()
+            #DEBUG: 'indent = 4' is for debugging generated JavaScript
+            segmentContentStr =  json.dumps(tableConfigDict, indent=4)
+            templateStrTableHandsonJS = self.render_template(
+                file   = 'handsontable.html',
+                values = {'tableJson':segmentContentStr},
+                )
+            if(templateStrTableHandsonJS):
+              generatedHtml = templateStrTableHandsonJS
+        #</gen code for javascript table>
         requestUrl = self.pageRelUrl + '?' # + 'subtitle_id=' + subtitle_id
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_edit(
             title=subtitle_id,
             pageName = self.pageRelUrl,
             action   = requestUrl + '&action=submit',
-            displayText=subContentStr,
+            displayText = generatedHtml,
+            textareaContent = subContentStr,
             )
       elif(pageView == 'create'):
         #TODO: self.showView_edit(subtitle_id)
