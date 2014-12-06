@@ -161,6 +161,67 @@ class Subtitle(ndb.Model):
     return tableRows
   #</def get_2d_list>
 
+  #<def get_table_config_dict>
+  # mainly for the JavaScript 'handsontable' data-grid editor
+  #  doc: http://handsontable.com/
+  # define table for displaying subtitles:
+  # * table headers (for display)
+  # * column-names to display
+  # ** optional attribs: e.g. 'readOnly' for 'handsontable'
+  # * table data
+  # ** list of dicts with {colName1 : data1, colName2 : data2}
+  #
+  # handsontable sample entry:
+  # [{"line_id": "001", "time": "1:04", "txt": "black", "votes": 9},]
+  def get_table_config_dict(self):
+    subDataList = self.get_subtitle_list()
+    # title of columns
+    tableColHeaders = ["line_id", "time", "txt", "votes", "rev_id"]
+    # columns to display + attribs
+    tableColumns = [
+        {
+          "data" : "line_id",
+          "readOnly" : "true"
+          },
+        {
+          "data" : "time"
+          },
+        {
+          "data" : "txt"
+          },
+        {
+          "data" : "votes",
+          "readOnly" : "true"
+          },
+        {
+          "data" : "rev_id",
+          "readOnly" : "true"
+          }
+        ]
+
+    # loop through subtitle line entries and extract data
+    tableDataList = []
+    for lineIdDict in subDataList:
+      revKeys = ['time','txt','votes','rev_id']
+      # get all revisions
+      for revNum, revDict in enumerate(lineIdDict['rev']):
+        tmpTableDict = {}
+        tmpTableDict['line_id'] = lineIdDict["line_id"]
+        for key in revKeys:
+          if(key in revDict):
+            tmpTableDict[key] = revDict[key]
+          else:
+            tmpTableDict[key] = ''
+        tableDataList.append(tmpTableDict)
+    tableConfigDict = {
+        'data'       : tableDataList,
+        'colHeaders' : tableColHeaders,
+        'columns'    : tableColumns,
+        }
+    tableConfigDict['subtitle_id'] = self.get_id_string()
+    return tableConfigDict
+  # </def get_table_config_dict>
+
   #<def updateVotes>
   def updateVotes(self, **kwargs):
     requiredParams = ['line_id','rev_id','vote']
