@@ -2,8 +2,11 @@
 
 {% raw %}
 <div id="example" class="handsontable"></div>
+<button name="dump" data-dump="#example" data-instance="hot" title="Prints current data source to Firebug/Chrome Dev Tools">
+    Dump data to console
+  </button>
+
  <script>
-$(document).ready(function () {
 
 
   function getTableConfig() {
@@ -43,7 +46,6 @@ $(document).ready(function () {
     }
   bindDumpButton();
 
-});
  </script>
 {% endraw %}
  {% autoescape false %}
