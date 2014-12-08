@@ -20,7 +20,7 @@ class Subtitle(ndb.Model):
   # {"subtitles": [{"line_id": "0", "rev": [{"txt": "line1", "votes": 1}]},
   #                {"line_id": "1", "rev": [{"txt": "line2", "votes": 1}]}]}
   contentJson = ndb.JsonProperty()
-  content     = ndb.StringProperty(required=True)
+  content     = ndb.StringProperty(required=True,indexed=False)
   # summary of subtitle
   subSummary  = ndb.StringProperty(repeated=True)
   #</ndb fields>
