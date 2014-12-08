@@ -26,7 +26,40 @@ class BaseHandler(webapp2.RequestHandler):
             postVarDict[param] = self.request.get(param)
             #logging.info("BaseHandler::parse_options - param " + param + " - value " + postVarDict[param])
       return postVarDict
-      #</read in options>
+    #</read in options>
+
+    #<def json_load>
+    # mainly for the JavaScript 'handsontable' data-grid editor
+    def json_load(self, suspectedJson):
+      jsonObject = ''
+      ###  check if not a string
+      ## if(not isinstance(kwargs[var], basestring)):
+      try:
+        jsonObject = json.loads(suspectedJson)
+      except TypeError, e:
+        # check if already an object
+        dumpable = json.dumps(suspectedJson)
+        if(dumpable):
+          jsonObject = suspectedJson
+      except ValueError: # No JSON object could be decoded
+        return False
+      return jsonObject
+    #<def json_load>
+    
+    # <def json_dump>
+    # convert non-string parameters to string
+    def json_dump(self,suspectedJson):
+      # check if not a string
+      if(not isinstance(suspectedJson, basestring)):
+        content = suspectedJson
+        try:
+          jsonString = json.dumps(content)
+          suspectedJson = jsonString
+        except ValueError, e: # No JSON object could be decoded
+          return False
+
+      return suspectedJson
+    # </def json_dump>
 
     #<def render_template>
     # determine template based on (in order):
