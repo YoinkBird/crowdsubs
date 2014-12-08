@@ -129,7 +129,7 @@ class Subtitle(ndb.Model):
         jsonObject = suspectedJson
     except ValueError, e: # No JSON object could be decoded
       import logging
-      logging.info("load_json" + e)
+      logging.info("load_json: " + str(e))
       return False
     return jsonObject
   #<def load_json>
