@@ -2,8 +2,8 @@
 
 {% raw %}
 <div id="example" class="handsontable"></div>
-<button name="dump" data-dump="#example" data-instance="hot" title="Prints current data source to Firebug/Chrome Dev Tools">
-    Dump data to console
+<button class="btn btn-success" name="dump" data-dump="#example" data-instance="hot" title="Saves current data to server">
+  Update 
   </button>
 
  <script>
@@ -31,16 +31,36 @@
   
   
   function bindDumpButton() {
-  
       Handsontable.Dom.addEvent(document.body, 'click', function (e) {
-  
         var element = e.target || e.srcElement;
   
         if (element.nodeName == "BUTTON" && element.name == 'dump') {
           var name = element.getAttribute('data-dump');
           var instance = element.getAttribute('data-instance');
           var hot = window[instance];
-          console.log('data of ' + name, hot.getData());
+          //console.log('data of ' + name, hot.getData());
+          var url = "http://localhost:8080/api";
+          var tableData = {
+            'bogus':'junk',
+            'action' : 'create',
+            'subtitle_id': getTableConfig()['subtitle_id'],
+            'subtitle_content':hot.getData()};
+          tableData = JSON.stringify(tableData);
+          var dataType = "json";
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: tableData,
+            // reload page if data is submitted
+            // TODO: reload only table, not page
+            success: function(){
+              window.location.reload();
+            },
+            dataType: dataType
+          });
+
+          //console.log('tableData of ' + name, tableData);
+
         }
       });
     }
