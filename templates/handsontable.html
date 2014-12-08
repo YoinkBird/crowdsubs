@@ -31,16 +31,32 @@
   
   
   function bindDumpButton() {
-  
       Handsontable.Dom.addEvent(document.body, 'click', function (e) {
-  
         var element = e.target || e.srcElement;
   
         if (element.nodeName == "BUTTON" && element.name == 'dump') {
           var name = element.getAttribute('data-dump');
           var instance = element.getAttribute('data-instance');
           var hot = window[instance];
-          console.log('data of ' + name, hot.getData());
+          //console.log('data of ' + name, hot.getData());
+          var url = "http://localhost:8080/api";
+          var tableData = {
+            'bogus':'junk',
+            'action' : 'create',
+            'subtitle_id': getTableConfig()['subtitle_id'],
+            'subtitle_content':hot.getData()};
+          tableData = JSON.stringify(tableData);
+          var dataType = "json";
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: tableData,
+            //success: success,
+            dataType: dataType
+          });
+
+          //console.log('tableData of ' + name, tableData);
+
         }
       });
     }
