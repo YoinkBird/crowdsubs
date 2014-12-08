@@ -51,6 +51,9 @@ class Subtitle(ndb.Model):
     if(kwargs):
       if('content' in kwargs):
         self.content = kwargs['content']
+    # if 'content' is a valid json string...
+    self.update_content_from_table()
+    # ... or just text
     self.updateJson()
     return self.put()
 
@@ -108,6 +111,61 @@ class Subtitle(ndb.Model):
     self.contentJson = jsonDict
     # update summary
     self.updateSummary()
+
+  #<def load_json>
+  # attempt to load input as json
+  def load_json(self, **kwargs):
+    suspectedJson = self.content
+    if(kwargs):
+      if('json' in kwargs):
+        suspectedJson = kwargs['json']
+    # hold return value
+    jsonObject = ''
+    try:
+      jsonObject = json.loads(suspectedJson)
+    except TypeError, e:
+      dumpable = json.dumps(suspectedJson)
+      if(dumpable):
+        jsonObject = suspectedJson
+    except ValueError, e: # No JSON object could be decoded
+      import logging
+      logging.info("load_json: " + str(e))
+      return False
+    return jsonObject
+  #<def load_json>
+
+  #<def update_content_from_table>
+  # convert table to content format s.t. it can be processed by load_json
+  # Note: intermediate function to bridge gap between table and textarea
+  #       when textarea is gone, this function will no longer be needed
+  # Note: this does not adhere to the one-line_id-per-line paradigm
+  def update_content_from_table(self, **kwargs):
+    tableList = self.load_json()
+    if(kwargs):
+      if('tableList' in kwargs):
+        tableList = kwargs['tableList']
+    if(not tableList):
+      return
+    # handsontable sample entry:
+    # [{"line_id": "001", "time": "1:04", "txt": "black", "votes": 9},]
+
+    # 'content' field only has the text
+    contentStr = ''
+    # track which lines are updated to avoid duplications
+    #  won't be needed once 'update_json_from_table' is implemented
+    last_line_id_list = []
+    for line_id_dict in tableList:
+      lineStr = line_id_dict['txt']
+      line_id = line_id_dict['line_id']
+      if(lineStr):
+        # don't insert if line_id already taken
+        if(line_id and (line_id not in last_line_id_list)):
+          last_line_id_list.append(line_id)
+          contentStr += lineStr + "\n"
+    self.content = contentStr
+    pass
+  #</def update_content_from_table>
+
   
   #<parse_input_text>
   def parse_input_text(self, **kwargs):
