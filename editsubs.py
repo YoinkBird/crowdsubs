@@ -164,11 +164,11 @@ class SubtitleEditHandler(SubtitleApiHandler):
             title=subtitle_id,
             )
       elif(pageView == "display"):
+        import json
         # <debug>
-        if(1):
+        if(0):
           import html_templates
           contentStrJson = self.retrieve_sub(subtitle_id).get_json()
-          import json
           contentStrJson = json.dumps(
               json.loads(contentStrJson),
               sort_keys=True, indent=4)
@@ -178,6 +178,8 @@ class SubtitleEditHandler(SubtitleApiHandler):
             contentStrJson = "TESTING INFO - json:<br/>\n" + contentStrJson
             contentStrJson = html_templates.generateContainerDivBlue(contentStrJson)
             #subContentStr = contentStrJson + subContentStr
+        else:
+          contentStrJson = ''
         # </debug>
         # <gen html table>
         if(1):
