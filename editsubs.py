@@ -198,7 +198,10 @@ class SubtitleEditHandler(SubtitleApiHandler):
               values = {'tableJson':segmentContentStr},
               )
         #</gen code for javascript table>
-        subContentStr = templateStrTableHandsonJS + templateStrTableHtml
+        # note: disable handsontable, revert to simple html table.
+        #     quick measure until handsontable template can make optional the 'update' button
+        # subContentStr = templateStrTableHandsonJS + templateStrTableHtml
+        subContentStr = templateStrTableHtml
         pageContentStr = html_templates_subtitles.get_page_template_subtitle_display(
             title=subtitle_id,
             editUrl   = requestUrl + '&action=edit',
