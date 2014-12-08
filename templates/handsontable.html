@@ -2,8 +2,8 @@
 
 {% raw %}
 <div id="example" class="handsontable"></div>
-<button name="dump" data-dump="#example" data-instance="hot" title="Prints current data source to Firebug/Chrome Dev Tools">
-    Dump data to console
+<button class="btn btn-success" name="dump" data-dump="#example" data-instance="hot" title="Saves current data to server">
+  Update 
   </button>
 
  <script>
@@ -51,7 +51,11 @@
             type: "POST",
             url: url,
             data: tableData,
-            //success: success,
+            // reload page if data is submitted
+            // TODO: reload only table, not page
+            success: function(){
+              window.location.reload();
+            },
             dataType: dataType
           });
 
