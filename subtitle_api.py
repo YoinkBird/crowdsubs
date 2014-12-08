@@ -13,11 +13,26 @@ class SubtitleApiHandler(BaseHandler):
     # Set self.request, self.response and self.app.
     self.initialize(request, response)
     self.pageRelUrl = 'subs'
+
+
+  # <def validate_options>
+  # lint options based on rules hard-coded in this method
+  def validate_options(self,**kwargs):
+    if(kwargs):
+      # RuleXXX: only check 'subtitle_content' , not all parameters
+      if('subtitle_content' in kwargs):
+        kwargs['subtitle_content'] = self.json_dump(kwargs['subtitle_content'])
+        import logging
+        logging.info("dumping 'subtitle_content' to string")
+    return kwargs
+  # </def validate_options>
+
   def post(self):
     self.get()
   def get(self):
     # assume subtitle_id is required to get to this page
     paramDict = self.parse_options(paramList = ['subtitle_id','subtitle_content','action'])
+    paramDict = self.validate_options(**paramDict)
     self.process_json(**paramDict)
   def process_json(self, **kwargs):
     # TODO: add option parsing to BaseHandler
@@ -118,7 +133,9 @@ class SubtitleApiHandler(BaseHandler):
 
 
   def create_sub(self, sub_id, content):
+    # get subtitle (will be "None" if this is a new subtitle)
     newSub = self.retrieve_sub(sub_id)
+    # assume valid type
     if(not newSub):
       newSub = Subtitle(
           id = sub_id,
