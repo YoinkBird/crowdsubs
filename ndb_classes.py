@@ -141,6 +141,7 @@ class Subtitle(ndb.Model):
   # Note: this does not adhere to the one-line_id-per-line paradigm
   def update_content_from_table(self, **kwargs):
     tableList = self.load_json()
+    if(kwargs):
       if('tableList' in kwargs):
         tableList = kwargs['tableList']
     if(not tableList):
@@ -154,11 +155,13 @@ class Subtitle(ndb.Model):
     #  won't be needed once 'update_json_from_table' is implemented
     last_line_id_list = []
     for line_id_dict in tableList:
+      lineStr = line_id_dict['txt']
       line_id = line_id_dict['line_id']
       if(lineStr):
         # don't insert if line_id already taken
         if(line_id and (line_id not in last_line_id_list)):
           last_line_id_list.append(line_id)
+          contentStr += lineStr + "\n"
     self.content = contentStr
     pass
   #</def update_content_from_table>
