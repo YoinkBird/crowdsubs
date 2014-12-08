@@ -51,6 +51,8 @@ class Subtitle(ndb.Model):
     if(kwargs):
       if('content' in kwargs):
         self.content = kwargs['content']
+    # experimental
+    self.update_json_from_table()
     # if 'content' is a valid json string...
     self.update_content_from_table()
     # ... or just text
@@ -130,6 +132,8 @@ class Subtitle(ndb.Model):
     except ValueError, e: # No JSON object could be decoded
       import logging
       logging.info("load_json: " + str(e))
+      logging.info(suspectedJson)
+      logging.info(type(suspectedJson))
       return False
     return jsonObject
   #<def load_json>
@@ -166,6 +170,126 @@ class Subtitle(ndb.Model):
     pass
   #</def update_content_from_table>
 
+  #<def update_json_from_table>
+  def update_json_from_table(self, **kwargs):
+    import logging
+    tableList = self.load_json()
+    if(kwargs):
+      if('tableList' in kwargs):
+        tableList = kwargs['tableList']
+    if(not tableList):
+      return
+    # loop through list and extract data 
+    # handsontable sample entry:
+    # [{"line_id": "001", "time": "1:04", "txt": "black", "votes": 9},]
+    # contentJson format:
+    # {"subtitles": [{"line_id": "001", "rev": [{"time": "1:04", "txt": "line1", "votes": 1}]},
+    #                {"line_id": "002", "rev": [{"time": "2:07", "txt": "line2", "votes": 1}]}]}
+
+    # values if line is new - TODO: determine line_id
+    defaultValues = {"votes":1,"rev_id":"0000"}
+    for line_id_dict in tableList:
+      logging.info("looping through input:")
+      logging.info(line_id_dict)
+      # assign default values, e.g. new entry has no revision, votes
+      for default in defaultValues:
+        if(default not in line_id_dict):
+          line_id_dict[default] = defaultValues[default]
+      # create entry for contentJson:
+      # find revision
+      # first, get corresponding line_id_dict
+      line_id_index = self.insert_line_id_dict(line_id_dict)
+      logging.info("received line_id_index " + str(line_id_index))
+      if(line_id_index):
+        line_id_dict_old = self.contentJson['subtitles'][line_id_index]
+        # now line_id_dict should match contentJson format if nothing was changed
+        ### if(line_id_dict != contentJson['subtitles'][line_id])
+        #rev_id_list = self.contentJson['subtitles'][line_id]['rev'].keys()
+
+
+  #</def update_json_from_table>
+
+  # add line_id dict to JsonProperty
+  def insert_line_id_dict(self,line_id_dict):
+    import logging
+    logging.info("#" * 8 + "entering insert_line_id_dict")
+    logging.info("passed in line_id_dict:")
+    logging.info(line_id_dict)
+    # extract line_id; delete because we need to subclass revisions by line_id
+    line_id = line_id_dict.pop('line_id',None)
+
+    # step1: create index if none exists
+    if(not line_id):
+      # TODO: generate line_id
+      return
+
+    # step2: get index of corresponding line_id_dict
+    # first, get corresponding line_id_dict
+    line_id_index = self.get_index_of_line_id(line_id)
+    logging.info("received line_id_index " + str(line_id_index))
+    # step3: get line_id_dict at line_id_index
+    if(line_id_index):
+      self.insert_rev_id_dict(line_id_index, line_id_dict)
+
+    # step-final: return line_id_index
+    logging.info("#" * 8 + "leaving insert_line_id_dict")
+    return line_id_index
+
+  def get_index_of_line_id(self,line_id):
+    import logging
+    logging.info("looking up line_id " + str(line_id))
+    for index, line_id_dict in enumerate(self.contentJson['subtitles']):
+      if(line_id_dict['line_id'] == line_id):
+        logging.info("found line_id at " + str(index))
+        logging.info(self.contentJson['subtitles'][index])
+        return index
+
+  # add rev_id dict to JsonProperty at given line_id_index
+  def insert_rev_id_dict(self, line_id_index, line_id_dict):
+    import logging
+    logging.info("#" * 8 + "entering insert_rev_id_dict")
+    logging.info("passed in line_id_dict:")
+    logging.info(line_id_dict)
+    line_id_dict_old = self.contentJson['subtitles'][line_id_index]
+    # step4: create rev_id if none exists
+    # note: this is also taken care of by the calling function
+    if(not line_id_dict['rev_id']):
+      line_id_dict['rev_id'] = '0000'
+
+    # step5: get existing rev_id
+    rev_id_list = self.contentJson['subtitles'][line_id_index]['rev']
+    logging.info("existing rev_ids:" + str(len(rev_id_list)))
+    logging.info(rev_id_list)
+    logging.info("/existing rev_ids:")
+
+    # step6: check if current rev equal to any in the list
+    found_flag = 0
+    new_rev_id = 0
+    for rev_id_dict in rev_id_list:
+      logging.info(line_id_dict)
+      logging.info(rev_id_dict)
+      if(line_id_dict == rev_id_dict):
+        found_flag = 1
+      else:
+        new_rev_id = len(rev_id_list)
+    if(found_flag == 0):
+      logging.info("assigning " + str(new_rev_id))
+      line_id_dict['rev_id'] = "%04d" % (new_rev_id)
+      self.contentJson['subtitles'][line_id_index]['rev'].append(line_id_dict)
+      self.put()
+    
+  #<def get_line_by_rev>
+  # return False for bad inputs
+  # return empty dict for 
+  def get_line_by_rev(self, **kwargs):
+    for reqParam in ['line_id','rev_id']:
+      if(reqParam not in kwargs):
+        return False
+
+    # get all current revisions
+    subtitleList = self.get_subtitle_list()
+    pass
+  #</def get_line_by_rev>
   
   #<parse_input_text>
   def parse_input_text(self, **kwargs):
